@@ -10,6 +10,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val fm = formatNumbers()
         val post = Post(
             id = 1,
             author = "Нетология. Университет интернет-профессий будущего",
@@ -21,11 +22,6 @@ class MainActivity : AppCompatActivity() {
                     "Наша миссия — помочь встать на путь роста и начать цепочку перемен → http://netolo.gy/fyb",
             likedByMe = false
         )
-        fun formatNumber (count: Int) : String {
-            if (count in (1_000..999_999)) return (count / 1_000).toString() + "K"
-            if (count >= 1_000_000) return (count / 1_000_000).toString() + "M"
-            return count.toString()
-        }
         with(binding) {
             author.text = post.author
             published.text = post.published
@@ -42,13 +38,13 @@ class MainActivity : AppCompatActivity() {
                     else R.drawable.baseline_favorite_border_24
                 )
                 if (post.likedByMe) post.likeCount++ else post.likeCount--
-                like?.text = formatNumber(post.likeCount)
+                like?.text = fm.formatNumber(post.likeCount)
             }
 
             reposts?.setOnClickListener {
                 post.shareByMe = !post.shareByMe
                 post.share ++
-                repost?.text = formatNumber(post.share)
+                repost?.text = fm.formatNumber(post.share)
             }
         }
     }
