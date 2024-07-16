@@ -10,7 +10,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val fm = formatNumbers()
         val post = Post(
             id = 1,
             author = "Нетология. Университет интернет-профессий будущего",
@@ -26,6 +25,8 @@ class MainActivity : AppCompatActivity() {
             author.text = post.author
             published.text = post.published
             base.text = post.content
+            like.text = formatNumber(post.likeCount)
+            repost.text = formatNumber(post.share)
 
             if (post.likedByMe) {
                 likes?.setImageResource(R.drawable.ic_liked_24)
@@ -38,15 +39,14 @@ class MainActivity : AppCompatActivity() {
                     else R.drawable.baseline_favorite_border_24
                 )
                 if (post.likedByMe) post.likeCount++ else post.likeCount--
-                like?.text = fm.formatNumber(post.likeCount)
+                like?.text = formatNumber(post.likeCount)
             }
 
             reposts?.setOnClickListener {
                 post.shareByMe = !post.shareByMe
                 post.share ++
-                repost?.text = fm.formatNumber(post.share)
+                repost?.text = formatNumber(post.share)
             }
         }
     }
 }
-
