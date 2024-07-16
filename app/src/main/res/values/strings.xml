@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">NMedia</string>
     <string name="nmedia">NMedia!</string>
+    <string name="views" translatable="false">Views</string>
+    <string name="menu" translatable="false">menu</string>
+    <string name="likes" translatable="false">likes</string>
+    <string name="reposts" translatable="false">reposts</string>
+    <string name="view_pic" translatable="false">view_pic</string>
+    <string name="content" translatable="false">content</string>
 </resources>
