@@ -1,6 +1,7 @@
 package ru.netology.nmedia
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import ru.netology.nmedia.databinding.ActivityMainBinding
 
@@ -10,43 +11,36 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val post = Post(
-            id = 1,
-            author = "Нетология. Университет интернет-профессий будущего",
-            published = "21 мая в 18:36",
-            content = "Привет, это новая Нетология! Когда-то Нетология начиналась с интенсивов по онлайн-маркетингу. " +
-                    "Затем появились курсы по дизайну, разработке, аналитике и управлению. " +
-                    "Мы растём сами и помогаем расти студентам: от новичков до уверенных профессионалов. " +
-                    "Но самое важное остаётся с нами: мы верим, что в каждом уже есть сила, которая заставляет хотеть больше, целиться выше, бежать быстрее. " +
-                    "Наша миссия — помочь встать на путь роста и начать цепочку перемен → http://netolo.gy/fyb",
-            likedByMe = false
-        )
-        with(binding) {
-            author.text = post.author
-            published.text = post.published
-            base.text = post.content
-            like.text = formatNumber(post.likeCount)
-            repost.text = formatNumber(post.share)
 
-            if (post.likedByMe) {
-                likes?.setImageResource(R.drawable.ic_liked_24)
-            }
+        val viewModel: PostViewModel by viewModels()
+        viewModel.data.observe(this) { post ->
+            with(binding) {
+                author.text = post.author
+                published.text = post.published
+                base.text = post.content
+                view.text = formatNumber(post.vieww)
+                like.text = formatNumber(post.likeCount)
+                repost.text = formatNumber(post.share)
 
-            likes?.setOnClickListener {
-                post.likedByMe = !post.likedByMe
                 likes.setImageResource(
                     if (post.likedByMe) R.drawable.ic_liked_24
                     else R.drawable.baseline_favorite_border_24
                 )
-                if (post.likedByMe) post.likeCount++ else post.likeCount--
-                like?.text = formatNumber(post.likeCount)
+                reposts.setImageResource(
+                    if (post.shareByMe) R.drawable.baseline_share_24
+                    else R.drawable.baseline_share_24
+                )
+                views.setImageResource(
+                    R.drawable.baseline_remove_red_eye_24
+                )
             }
+        }
 
-            reposts?.setOnClickListener {
-                post.shareByMe = !post.shareByMe
-                post.share ++
-                repost?.text = formatNumber(post.share)
-            }
+        binding.likes.setOnClickListener {
+            viewModel.like()
+        }
+        binding.reposts.setOnClickListener {
+            viewModel.repost()
         }
     }
 }

@@ -97,7 +97,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/likes"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/likes"
-        android:text="10" />
+        tools:text="10" />
 
     <TextView
         android:id="@+id/repost"
@@ -108,7 +108,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/reposts"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/reposts"
-        android:text="5" />
+        tools:text="5" />
 
     <TextView
         android:id="@+id/view"
@@ -120,7 +120,7 @@
         app:layout_constraintBottom_toBottomOf="@id/views"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/views"
-        android:text="257" />
+        tools:text="257" />
 
     <ImageView
         android:id="@+id/likes"
