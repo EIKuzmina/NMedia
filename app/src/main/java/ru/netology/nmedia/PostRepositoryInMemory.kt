@@ -14,20 +14,24 @@ class PostRepositoryInMemory : PostRepository {
                 "Но самое важное остаётся с нами: мы верим, что в каждом уже есть сила, которая заставляет хотеть больше, целиться выше, бежать быстрее. " +
                 "Наша миссия — помочь встать на путь роста и начать цепочку перемен → http://netolo.gy/fyb",
         likedByMe = false,
-        shareByMe = false
+        likeCount = 3,
+        shareByMe = false,
+        share = 0,
+        vieww = 12
     )
     private val data = MutableLiveData(post)
 
     override fun get(): LiveData<Post> = data
     override fun like() {
-        post = post.copy(likedByMe = !post.likedByMe)
-        if (post.likedByMe) post.likeCount++
-        else post.likeCount--
+        post = post.copy(likedByMe = !post.likedByMe,
+            likeCount = if (post.likedByMe) post.likeCount - 1
+            else post.likeCount + 1)
         data.value = post
     }
+
     override fun repost() {
-        post = post.copy(shareByMe = !post.shareByMe)
-        post.share++
+        post = post.copy(shareByMe = !post.shareByMe,
+            share = post.share + 1)
         data.value = post
     }
 }
