@@ -1,158 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/fields_around"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    tools:ignore="SpeakableTextPresentCheck">
 
-    <ImageView
-        android:id="@+id/avatar"
-        android:layout_width="@dimen/avatar"
-        android:layout_height="@dimen/avatar"
-        android:layout_marginBottom="@dimen/fields_around"
-        android:contentDescription="@string/views"
-        app:layout_constraintBottom_toBottomOf="@id/barrier"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/netology" />
-
-    <TextView
-        android:id="@+id/author"
-        android:layout_width="0dp"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/fields_around"
-        android:layout_marginEnd="@dimen/fields_around"
-        android:layout_marginBottom="1dp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        app:layout_constraintBottom_toTopOf="@+id/published"
-        app:layout_constraintEnd_toStartOf="@+id/menu"
-        app:layout_constraintStart_toEndOf="@+id/avatar"
-        app:layout_constraintTop_toTopOf="@+id/avatar"
-        app:layout_constraintVertical_chainStyle="packed"
-        tools:text="@sample/posts.json/data/author" />
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/card_post"/>
 
-    <TextView
-        android:id="@+id/published"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/fields_around"
-        android:layout_marginEnd="@dimen/fields_around"
-        android:layout_marginBottom="@dimen/fields_around"
-        app:layout_constraintBottom_toBottomOf="@+id/barrier"
-        app:layout_constraintStart_toEndOf="@+id/avatar"
-        app:layout_constraintTop_toBottomOf="@+id/author"
-        tools:text="@sample/posts.json/data/published" />
-
-    <ImageButton
-        android:id="@+id/menu"
-        android:layout_width="@dimen/Button"
-        android:layout_height="@dimen/Button"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/menu"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="TouchTargetSizeCheck"
-        app:srcCompat="@drawable/baseline_more_vert_24" />
-
-    <TextView
-        android:id="@+id/base"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/fields_around"
-        android:layout_marginEnd="@dimen/fields_around"
-        android:layout_marginBottom="@dimen/fields_around"
-        android:autoLink="web"
-        android:contentDescription="@string/content"
-        app:layout_constraintBottom_toBottomOf="@id/barrier1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/barrier"
-        app:layout_goneMarginTop="@dimen/fields_around"
-        tools:text="@sample/posts.json/data/content" />
-
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/barrier"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="avatar,published,menu" />
-
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/barrier1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="base" />
-
-    <TextView
-        android:id="@+id/like"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_marginStart="45dp"
-        app:layout_constraintBottom_toBottomOf="@+id/likes"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/likes"
-        tools:text="10" />
-
-    <TextView
-        android:id="@+id/repost"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_marginStart="150dp"
-        app:layout_constraintBottom_toBottomOf="@+id/reposts"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/reposts"
-        tools:text="5" />
-
-    <TextView
-        android:id="@+id/view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_marginStart="@dimen/fields_around"
-        android:layout_marginEnd="@dimen/fields_around"
-        app:layout_constraintBottom_toBottomOf="@id/views"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/views"
-        tools:text="257" />
-
-    <ImageView
-        android:id="@+id/likes"
-        android:layout_width="@dimen/likes"
-        android:layout_height="@dimen/likes"
-        android:layout_marginStart="@dimen/fields_around"
-        android:layout_marginTop="@dimen/fields_around"
-        android:contentDescription="@string/likes"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/barrier1"
-        app:srcCompat="@drawable/baseline_favorite_border_24" />
-
-    <ImageView
-        android:id="@+id/reposts"
-        android:layout_width="@dimen/likes"
-        android:layout_height="@dimen/likes"
-        android:layout_marginStart="120dp"
-        android:layout_marginTop="@dimen/fields_around"
-        android:contentDescription="@string/reposts"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/barrier1"
-        app:srcCompat="@drawable/baseline_share_24" />
-
-    <ImageView
-        android:id="@+id/views"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="50dp"
-        android:contentDescription="@string/view_pic"
-        app:layout_goneMarginTop="@dimen/fields_around"
-        app:layout_constraintTop_toBottomOf="@id/barrier1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/baseline_remove_red_eye_24" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

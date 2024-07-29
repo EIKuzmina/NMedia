@@ -7,4 +7,5 @@
     <string name="reposts" translatable="false">reposts</string>
     <string name="view_pic" translatable="false">view_pic</string>
     <string name="content" translatable="false">content</string>
+    <string name="container" />
 </resources>
