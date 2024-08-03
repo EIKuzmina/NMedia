@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">NMedia</string>
     <string name="nmedia">NMedia!</string>
+    <string name="remove_menu">Remove</string>
+    <string name="edit">Edit</string>
+    <string name="post_text">Post text</string>
     <string name="views" translatable="false">Views</string>
     <string name="menu" translatable="false">menu</string>
     <string name="likes" translatable="false">likes</string>
@@ -8,4 +11,8 @@
     <string name="view_pic" translatable="false">view_pic</string>
     <string name="content" translatable="false">content</string>
     <string name="container" translatable="false" >container</string>
+    <string name="save" translatable="false">save</string>
+    <string name="cancel" translatable="false">cancel</string>
+
+
 </resources>

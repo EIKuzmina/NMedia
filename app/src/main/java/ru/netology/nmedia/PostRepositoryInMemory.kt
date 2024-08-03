@@ -4,9 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 
 class PostRepositoryInMemory : PostRepository {
+    private var nextId = 1
     private var posts = listOf(
         Post(
-            id = 1,
+            id = nextId++,
             author = "Нетология. Университет интернет-профессий будущего",
             published = "21 мая в 18:36",
             content = "Привет, это новая Нетология! Когда-то Нетология начиналась с интенсивов по онлайн-маркетингу. " +
@@ -21,7 +22,7 @@ class PostRepositoryInMemory : PostRepository {
             vieww = 12
         ),
         Post(
-            id = 2,
+            id = nextId++,
             author = "Нетология. Университет интернет-профессий будущего",
             published = "18 сентября в 10:12",
             content = "Знаний хватит на всех: на следующей неделе разбираемся с " +
@@ -33,7 +34,7 @@ class PostRepositoryInMemory : PostRepository {
             share = 2,
             vieww = 4
         )
-    )
+    ).reversed()
 
     private val data = MutableLiveData(posts)
 
@@ -55,6 +56,30 @@ class PostRepositoryInMemory : PostRepository {
                 shareByMe = !it.shareByMe,
                 share = it.share + 1
             )
+        }
+        data.value = posts
+    }
+
+    override fun removeById(id: Int) {
+        posts = posts.filter { it.id != id }
+        data.value = posts
+    }
+
+    override fun save(post: Post) {
+        if (post.id == 0) {
+            posts = listOf(
+                post.copy(
+                    id = nextId++,
+                    author = "Me",
+                    likedByMe = false,
+                    published = "now"
+                )
+            ) + posts
+            data.value = posts
+            return
+        }
+        posts = posts.map {
+            if (it.id != post.id) it else it.copy(content = post.content)
         }
         data.value = posts
     }
