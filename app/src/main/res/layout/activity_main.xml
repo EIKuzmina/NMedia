@@ -17,18 +17,11 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/card_post" />
 
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/barrier2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="top"
-        app:constraint_referenced_ids="content,save"/>
-
     <androidx.constraintlayout.widget.Group
         android:id="@+id/group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="visible"
+        android:visibility="gone"
         app:constraint_referenced_ids="cancel" />
 
     <ImageButton
@@ -38,9 +31,15 @@
         android:background="@android:color/transparent"
         android:contentDescription="@string/cancel"
         app:srcCompat="@drawable/baseline_close_24"
-        app:layout_constraintBottom_toTopOf="@id/save"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/content" />
+        app:layout_constraintBottom_toTopOf="@id/barrier2"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="top"
+        app:constraint_referenced_ids="content,save"/>
 
     <EditText
         android:id="@+id/content"
@@ -54,8 +53,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/save"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/barrier2"
-        />
+        app:layout_constraintTop_toTopOf="@id/barrier2" />
 
     <ImageButton
         android:id="@+id/save"

@@ -13,6 +13,4 @@
     <string name="container" translatable="false" >container</string>
     <string name="save" translatable="false">save</string>
     <string name="cancel" translatable="false">cancel</string>
-
-
 </resources>

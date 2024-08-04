@@ -42,17 +42,17 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        viewModel.edited.observe(this) { post ->
-            if (post.id == 0) {
-                return@observe
-            }
+        viewModel.edited.observe(this) {
             with(binding.content) {
-                requestFocus()
-                setText(post.content)
+                if (it.id != 0) {
+                    binding.group.visibility = View.VISIBLE
+                    requestFocus()
+                    setText(it.content)
+                }
             }
         }
-        binding.save.setOnClickListener {
 
+        binding.save.setOnClickListener {
             with(binding.content) {
                 if (text.isNullOrBlank()) {
                     Toast.makeText(
@@ -65,26 +65,24 @@ class MainActivity : AppCompatActivity() {
 
                 viewModel.changeContent(text.toString())
                 viewModel.save()
-
                 setText("")
                 clearFocus()
-                AndroidUtils.hideKeyboard(this)
-            }
-        }
-        binding.group.visibility = View.GONE
-        binding.cancel.setOnClickListener {
-            with(binding.content) {
-                setText("")
-                clearFocus()
-                AndroidUtils.hideKeyboard(this)
-
                 binding.group.visibility = View.GONE
+                AndroidUtils.hideKeyboard(this)
             }
-            return@setOnClickListener
         }
-
         binding.content.setOnClickListener {
             binding.group.visibility = View.VISIBLE
+        }
+
+        binding.cancel.setOnClickListener {
+            with(binding.content) {
+                viewModel.clearEdit()
+                setText("")
+                clearFocus()
+                binding.group.visibility = View.GONE
+                AndroidUtils.hideKeyboard(this)
+            }
         }
     }
 }
