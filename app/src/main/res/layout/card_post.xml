@@ -47,16 +47,19 @@
         app:layout_constraintTop_toBottomOf="@+id/author"
         tools:text="@sample/posts.json/data/published" />
 
-    <ImageButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/menu"
         android:layout_width="@dimen/Button"
         android:layout_height="@dimen/Button"
         android:background="@android:color/transparent"
+        android:checkable="true"
         android:contentDescription="@string/menu"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:icon="@drawable/click_menu"
+        style="@style/Widget.AppTheme.MenuButton"
         tools:ignore="TouchTargetSizeCheck"
-        app:srcCompat="@drawable/baseline_more_vert_24" />
+        />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier"
