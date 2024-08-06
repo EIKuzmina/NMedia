@@ -19,7 +19,7 @@ class PostRepositoryInMemory : PostRepository {
             likeCount = 3,
             shareByMe = false,
             share = 0,
-            vieww = 12
+            view = 12
         ),
         Post(
             id = nextId++,
@@ -32,7 +32,7 @@ class PostRepositoryInMemory : PostRepository {
             likeCount = 5,
             shareByMe = false,
             share = 2,
-            vieww = 4
+            view = 4
         )
     ).reversed()
 

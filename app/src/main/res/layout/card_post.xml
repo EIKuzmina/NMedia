@@ -58,6 +58,13 @@
         tools:ignore="TouchTargetSizeCheck"
         app:srcCompat="@drawable/baseline_more_vert_24" />
 
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="avatar,published,menu" />
+
     <TextView
         android:id="@+id/base"
         android:layout_width="0dp"
@@ -75,84 +82,58 @@
         tools:text="@sample/posts.json/data/content" />
 
     <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/barrier"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="avatar,published,menu" />
-
-    <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
         app:constraint_referenced_ids="base" />
 
-    <TextView
-        android:id="@+id/like"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_marginStart="45dp"
-        app:layout_constraintBottom_toBottomOf="@+id/likes"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/likes"
-        tools:text="10" />
-
-    <TextView
-        android:id="@+id/repost"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_marginStart="150dp"
-        app:layout_constraintBottom_toBottomOf="@+id/reposts"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/reposts"
-        tools:text="5" />
-
-    <TextView
-        android:id="@+id/view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_marginStart="@dimen/fields_around"
-        android:layout_marginEnd="@dimen/fields_around"
-        app:layout_constraintBottom_toBottomOf="@id/views"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/views"
-        tools:text="257" />
-
-    <ImageView
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/likes"
-        android:layout_width="@dimen/likes"
-        android:layout_height="@dimen/likes"
-        android:layout_marginStart="@dimen/fields_around"
-        android:layout_marginTop="@dimen/fields_around"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:textColor ="?attr/colorControlNormal"
+        android:layout_marginBottom="@dimen/fields_around"
+        android:checkable="true"
         android:contentDescription="@string/likes"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/barrier1"
-        app:srcCompat="@drawable/baseline_favorite_border_24" />
+        app:icon="@drawable/click_likes"
+        style="@style/Widget.AppTheme.LikeButton"
+        tools:ignore="TouchTargetSizeCheck"
+        />
 
-    <ImageView
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/reposts"
-        android:layout_width="@dimen/likes"
-        android:layout_height="@dimen/likes"
-        android:layout_marginStart="120dp"
-        android:layout_marginTop="@dimen/fields_around"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:textColor ="?attr/colorControlNormal"
+        android:layout_marginStart="70dp"
+        android:checkable="true"
         android:contentDescription="@string/reposts"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/barrier1"
-        app:srcCompat="@drawable/baseline_share_24" />
+        app:icon="@drawable/click_repost"
+        style="@style/Widget.AppTheme.RepostButton"
+        tools:ignore="TouchTargetSizeCheck"
+        />
 
-    <ImageView
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/views"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="50dp"
+        android:background="@android:color/transparent"
+        android:textColor ="?attr/colorControlNormal"
+        android:layout_marginEnd="10dp"
+        android:checkable="true"
         android:contentDescription="@string/view_pic"
-        app:layout_goneMarginTop="@dimen/fields_around"
         app:layout_constraintTop_toBottomOf="@id/barrier1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/baseline_remove_red_eye_24" />
+        app:icon="@drawable/click_view"
+        style="@style/Widget.AppTheme.ViewButton"
+        tools:ignore="TouchTargetSizeCheck"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

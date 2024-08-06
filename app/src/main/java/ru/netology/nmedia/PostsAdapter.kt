@@ -34,6 +34,7 @@ class PostsAdapter(
             CardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return PostViewHolder(binding, onInteractionListener)
     }
+
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = getItem(position)
         holder.bind(post)
@@ -50,28 +51,22 @@ class PostViewHolder(
             author.text = post.author
             published.text = post.published
             base.text = post.content
-            view.text = formatNumber(post.vieww)
-            like.text = formatNumber(post.likeCount)
-            repost.text = formatNumber(post.share)
 
-
-            likes.setImageResource(
-                if (post.likedByMe) R.drawable.ic_liked_24
-                else R.drawable.baseline_favorite_border_24
-            )
+            likes.isChecked = post.likedByMe
+            likes.text = formatNumber(post.likeCount)
             likes.setOnClickListener {
                 onInteractionListener.onLike(post)
             }
-            reposts.setImageResource(
-                if (post.shareByMe) R.drawable.baseline_share_24
-                else R.drawable.baseline_share_24
-            )
+
+            reposts.isChecked = post.shareByMe
+            reposts.text = formatNumber(post.share)
             reposts.setOnClickListener {
                 onInteractionListener.onRepost(post)
             }
-            views.setImageResource(
-                R.drawable.baseline_remove_red_eye_24
-            )
+
+            views.isChecked = post.viewByMe
+            views.text = formatNumber(post.view)
+
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)
@@ -81,10 +76,12 @@ class PostViewHolder(
                                 onInteractionListener.onRemove(post)
                                 true
                             }
+
                             R.id.edit -> {
                                 onInteractionListener.onEdit(post)
                                 true
                             }
+
                             else -> false
                         }
                     }

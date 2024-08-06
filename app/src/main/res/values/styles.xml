@@ -1,0 +1,17 @@
+<resources>
+    <style name="Widget.AppTheme.LikeButton" parent="Widget.MaterialComponents.Button.TextButton.Icon">
+        <item name="iconTint">@color/color_likes</item>
+        <item name="android:minWidth">0dp</item>
+    </style>
+
+    <style name="Widget.AppTheme.RepostButton" parent="Widget.MaterialComponents.Button.TextButton.Icon">
+        <item name="iconTint">@color/color_normal</item>
+        <item name="android:minWidth">0dp</item>
+    </style>
+
+    <style name="Widget.AppTheme.ViewButton" parent="Widget.MaterialComponents.Button.TextButton.Icon">
+        <item name="iconTint">@color/color_normal</item>
+        <item name="android:minWidth">0dp</item>
+    </style>
+
+</resources>

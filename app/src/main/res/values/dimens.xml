@@ -3,5 +3,5 @@
     <dimen name="fields_around">17dp</dimen>
     <dimen name="avatar">48dp</dimen>
     <dimen name="Button">34dp</dimen>
-    <dimen name="likes">24dp</dimen>
+    <dimen name="buttons">24dp</dimen>
 </resources>
