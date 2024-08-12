@@ -16,7 +16,6 @@ class NewPostActivity : AppCompatActivity() {
     } // заводим отдельную константу, ключ для хранения текста
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_new_post)
         val binding = ActivityNewPostBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.okSave.setOnClickListener {  //проверяем введённый текст, что он не пустой, сохранеяем в переменную "text"
@@ -32,7 +31,6 @@ class NewPostActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                supportActionBar!!.setDisplayHomeAsUpEnabled(true)
                 finish()
                 true
             }

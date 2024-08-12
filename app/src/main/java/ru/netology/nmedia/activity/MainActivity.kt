@@ -27,10 +27,11 @@ class MainActivity : AppCompatActivity() {
             viewModel.save()
         }
         val editPostLauncher = registerForActivityResult(EditPostResultContract()) { result ->
-            result ?: return@registerForActivityResult
+            if (result != null) {
+                viewModel.changeContent(result)
+                viewModel.save()
+            }
             viewModel.clearEdit()
-            viewModel.changeContent(result)
-            viewModel.save()
         }
         val adapter = PostsAdapter(object : OnInteractionListener {
             override fun onLike(post: Post) {
