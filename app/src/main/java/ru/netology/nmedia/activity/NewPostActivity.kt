@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
 import ru.netology.nmedia.R
@@ -16,7 +17,6 @@ class NewPostActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_post)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         val binding = ActivityNewPostBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.okSave.setOnClickListener {  //проверяем введённый текст, что он не пустой, сохранеяем в переменную "text"
@@ -27,6 +27,17 @@ class NewPostActivity : AppCompatActivity() {
                 setResult(RESULT_OK, Intent().apply { putExtra(KEY_TEXT, text)})
             }
             finish()
+        }
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+                finish()
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }

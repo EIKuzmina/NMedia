@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.viewModels
@@ -19,7 +20,7 @@ class EditPostActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_post)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+
         val binding = ActivityEditPostBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.edit.requestFocus()
@@ -32,7 +33,19 @@ class EditPostActivity : AppCompatActivity() {
                 intent.putExtra(Intent.EXTRA_TEXT, text)
                 setResult(Activity.RESULT_OK, intent)
             }
-                finish()
-            }
+            finish()
         }
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+                finish()
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+}
