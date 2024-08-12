@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
         }
         val editPostLauncher = registerForActivityResult(EditPostResultContract()) { result ->
             result ?: return@registerForActivityResult
+            viewModel.clearEdit()
             viewModel.changeContent(result)
             viewModel.save()
         }
