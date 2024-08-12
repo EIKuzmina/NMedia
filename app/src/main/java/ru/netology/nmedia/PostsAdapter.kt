@@ -1,6 +1,7 @@
 package ru.netology.nmedia
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
@@ -13,7 +14,7 @@ interface OnInteractionListener {
     fun onRepost(post: Post) {}
     fun onEdit(post: Post) {}
     fun onRemove(post: Post) {}
-
+    fun onVideo(post: Post) {}
 }
 
 class PostDiffCallback : DiffUtil.ItemCallback<Post>() {
@@ -62,6 +63,12 @@ class PostViewHolder(
             reposts.text = formatNumber(post.share)
             reposts.setOnClickListener {
                 onInteractionListener.onRepost(post)
+            }
+
+            video.visibility = if (post.video.isNotEmpty())
+                View.VISIBLE else View.GONE
+            video.setOnClickListener {
+                onInteractionListener.onVideo(post)
             }
 
             views.isChecked = post.viewByMe

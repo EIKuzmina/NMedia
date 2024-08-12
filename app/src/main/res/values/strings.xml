@@ -4,13 +4,15 @@
     <string name="remove_menu">Remove</string>
     <string name="edit">Edit</string>
     <string name="post_text">Post text</string>
+    <string name="chooser_repost_post">Repost post</string>
     <string name="views" translatable="false">Views</string>
     <string name="menu" translatable="false">menu</string>
     <string name="likes" translatable="false">likes</string>
     <string name="reposts" translatable="false">reposts</string>
     <string name="view_pic" translatable="false">view_pic</string>
     <string name="content" translatable="false">content</string>
-    <string name="container" translatable="false" >container</string>
+    <string name="container" translatable="false">container</string>
     <string name="save" translatable="false">save</string>
     <string name="cancel" translatable="false">cancel</string>
+    <string name="description_post_save" translatable="false">description_post_save</string>
 </resources>

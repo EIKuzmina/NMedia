@@ -43,4 +43,5 @@ class PostViewModel : ViewModel() {
     fun likeById(id: Int) = repository.likeById(id)
     fun repost(id: Int) = repository.repost(id)
     fun removeById(id: Int) = repository.removeById(id)
+    fun videoById() = repository.videoById()
 }
