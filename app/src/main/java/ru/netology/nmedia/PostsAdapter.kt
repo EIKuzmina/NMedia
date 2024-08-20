@@ -15,6 +15,7 @@ interface OnInteractionListener {
     fun onEdit(post: Post) {}
     fun onRemove(post: Post) {}
     fun onVideo(post: Post) {}
+    fun onCardPost(post: Post) {}
 }
 
 class PostDiffCallback : DiffUtil.ItemCallback<Post>() {
@@ -69,6 +70,10 @@ class PostViewHolder(
                 View.VISIBLE else View.GONE
             video.setOnClickListener {
                 onInteractionListener.onVideo(post)
+            }
+
+            cardPost.setOnClickListener{
+                onInteractionListener.onCardPost(post)
             }
 
             views.isChecked = post.viewByMe

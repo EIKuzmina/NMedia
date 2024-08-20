@@ -5,7 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/main"
+    android:clickable="true"
+    android:focusable="true"
+    android:id="@+id/cardPost"
     android:padding="@dimen/fields_around">
 
     <ImageView
