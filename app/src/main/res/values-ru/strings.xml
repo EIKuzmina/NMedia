@@ -6,5 +6,9 @@
     <string name="post_text">Введите текст</string>
     <string name="edit">Редактировать</string>
     <string name="chooser_repost_post">Поделиться</string>
-
+    <string name="channel_remote_name">Уведомления с сервера</string>
+    <string name="channel_remote_description">Уведомления с удалённого сервера</string>
+    <string name="notification_user_liked">%1$s поставил лайк посту %2$s</string>
+    <string name="google_play_unavailable">Google Api Недоступно</string>
+    <string name="notification_new_post">%1$s опубликовал новый пост: %2$s</string>
 </resources>
