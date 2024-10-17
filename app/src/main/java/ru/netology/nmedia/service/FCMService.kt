@@ -1,7 +1,6 @@
 package ru.netology.nmedia.service
 
 import android.Manifest
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -19,7 +18,6 @@ import com.google.gson.Gson
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.AppActivity
 import kotlin.random.Random
-
 
 class FCMService : FirebaseMessagingService() {
     private val channelId = "channel"
@@ -40,23 +38,24 @@ class FCMService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
-        message.data["action"]?.let {
+        message.data["action"]?.let { action ->
             try {
-                when (Actions.valueOf(it)) {
-                    Actions.LIKE -> handleLike(
-                        gson.fromJson(
-                            message.data["content"],
-                            Like::class.java
+                if (Actions.entries.map { it.name }.contains(action))
+                    when (Actions.valueOf(action)) {
+                        Actions.LIKE -> handleLike(
+                            gson.fromJson(
+                                message.data["content"],
+                                Like::class.java
+                            )
                         )
-                    )
 
-                    Actions.NEW_POST -> newPost(
-                        gson.fromJson(
-                            message.data["content"],
-                            NewPost::class.java
+                        Actions.NEW_POST -> newPost(
+                            gson.fromJson(
+                                message.data["content"],
+                                NewPost::class.java
+                            )
                         )
-                    )
-                }
+                    }
             } catch (e: RuntimeException) {
                 println("Error!")
             }
@@ -104,8 +103,7 @@ class FCMService : FirebaseMessagingService() {
             .setContentTitle(
                 getString(
                     R.string.notification_new_post,
-                    post.userName,
-                    post.content
+                    post.userName
                 )
             )
             .setContentIntent(resultPendingIntent)
