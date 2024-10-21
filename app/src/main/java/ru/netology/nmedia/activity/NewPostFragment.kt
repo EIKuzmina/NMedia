@@ -4,11 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import ru.netology.nmedia.PostViewModel
+import ru.netology.nmedia.model.PostViewModel
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
 import ru.netology.nmedia.util.AndroidUtils
 import ru.netology.nmedia.util.StringArg
@@ -18,6 +17,8 @@ class NewPostFragment : Fragment() {
         var Bundle.textArg by StringArg
     }
 
+    private val viewModel: PostViewModel by activityViewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -25,22 +26,20 @@ class NewPostFragment : Fragment() {
     ): View {
         val binding = FragmentNewPostBinding.inflate(inflater, container, false)
         arguments?.textArg?.let(binding.editSave::setText)
-        val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
-        binding.editSave.setText(viewModel.draft.value?.content)
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            viewModel.draftContent(binding.editSave.text.toString())
-            findNavController().navigateUp()
-        }
+
         binding.okSave.setOnClickListener {
             val text = binding.editSave.text.toString()
-
             if (text.isNotBlank()) {
                 viewModel.changeContent(text)
-                viewModel.draftContent("")
                 viewModel.save()
+                    viewModel.draftContent("")
                 AndroidUtils.hideKeyboard(requireView())
-                findNavController().navigateUp()
             }
+        }
+
+        viewModel.postCreated.observe(viewLifecycleOwner) {
+            viewModel.loadPosts()
+            findNavController().navigateUp()
         }
         return binding.root
     }
