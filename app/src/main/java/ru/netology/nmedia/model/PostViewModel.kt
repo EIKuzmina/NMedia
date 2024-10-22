@@ -17,6 +17,7 @@ private val empty = Post(
     author = "",
     likedByMe = false,
     published = "",
+    likes = 0
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
@@ -74,11 +75,12 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 if (_data.value?.posts.orEmpty().filter { it.id == id }.none { it.likedByMe }) {
                     repository.likeById(id)
+                    loadPosts()
                 } else repository.dislikeById(id)
+                loadPosts()
             } catch (e: IOException) {
                 _data.postValue(_data.value?.copy(posts = old))
             }
-            loadPosts()
         }
     }
 
@@ -111,5 +113,4 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         fun repost(id: Int) = repository.repost(id)
-        fun videoById() = repository.videoById()
     }

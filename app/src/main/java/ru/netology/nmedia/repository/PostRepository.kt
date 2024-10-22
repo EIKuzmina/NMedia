@@ -8,6 +8,5 @@ interface PostRepository {
     fun repost(id: Int)
     fun removeById(id: Int)
     fun save(post: Post)
-    fun videoById()
     fun dislikeById(id: Int)
 }

@@ -79,8 +79,4 @@ class PostRepositoryImpl : PostRepository {
             .execute()
             .close()
     }
-
-    override fun videoById() {
-
-    }
 }
