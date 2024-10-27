@@ -75,9 +75,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 if (_data.value?.posts.orEmpty().filter { it.id == id }.none { it.likedByMe }) {
                     repository.likeById(id)
-                    loadPosts()
                 } else repository.dislikeById(id)
-                loadPosts()
             } catch (e: IOException) {
                 _data.postValue(_data.value?.copy(posts = old))
             }
