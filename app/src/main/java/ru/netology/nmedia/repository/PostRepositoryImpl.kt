@@ -15,10 +15,12 @@ class PostRepositoryImpl : PostRepository {
         .build()
     private val gson = Gson()
     private val typeToken = object : TypeToken<List<Post>>() {}
+
     companion object {
         private const val BASE_URL = "http://10.0.2.2:9999"
         private val jsonType = "application/json".toMediaType()
     }
+
     override fun getAll(): List<Post> {
         val request: Request = Request.Builder()
             .url("${BASE_URL}/api/slow/posts")
@@ -32,27 +34,22 @@ class PostRepositoryImpl : PostRepository {
             }
     }
 
-    override fun likeById(id: Int) {
+    override fun likeById(id: Int, likedByMe: Boolean): Post {
         val request: Request = Request.Builder()
-            .post(gson.toJson(id).toRequestBody(jsonType))
             .url("${BASE_URL}/api/slow/posts/${id}/likes")
+            .run {
+                if (likedByMe) {
+                    delete(gson.toJson(id).toRequestBody(jsonType))
+                } else {
+                    post(gson.toJson(id).toRequestBody(jsonType))
+                }
+            }
             .build()
 
-
-        client.newCall(request)
+        val response = client.newCall(request)
             .execute()
-            .close()
-    }
-
-    override fun dislikeById(id: Int) {
-        val request: Request = Request.Builder()
-            .delete(gson.toJson(id).toRequestBody(jsonType))
-            .url("${BASE_URL}/api/slow/posts/${id}/likes")
-            .build()
-
-        client.newCall(request)
-            .execute()
-            .close()
+            .body?.string() ?: error("body is null")
+        return gson.fromJson(response, Post::class.java)
     }
 
     override fun save(post: Post) {
