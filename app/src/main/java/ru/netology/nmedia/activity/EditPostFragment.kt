@@ -8,7 +8,7 @@ import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import ru.netology.nmedia.PostViewModel
+import ru.netology.nmedia.model.PostViewModel
 import ru.netology.nmedia.databinding.FragmentEditPostBinding
 import ru.netology.nmedia.util.AndroidUtils
 import ru.netology.nmedia.util.StringArg
@@ -32,7 +32,6 @@ class EditPostFragment : Fragment() {
             val text = binding.edit.text.toString()
             viewModel.changeContent(text)
             viewModel.save()
-            AndroidUtils.hideKeyboard(requireView())
             findNavController().navigateUp()
         }
 

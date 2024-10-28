@@ -6,12 +6,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.OnInteractionListener
 import ru.netology.nmedia.Post
-import ru.netology.nmedia.PostViewModel
+import ru.netology.nmedia.model.PostViewModel
 import ru.netology.nmedia.PostsAdapter
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
@@ -27,8 +28,9 @@ class FeedFragment : Fragment() {
         val binding = FragmentFeedBinding.inflate(inflater, container, false)
         val viewModel: PostViewModel by viewModels(ownerProducer = :: requireParentFragment)
         val adapter = PostsAdapter(object : OnInteractionListener {
+
             override fun onLike(post: Post) {
-                viewModel.likeById(post.id)
+                viewModel.likeById(post.id, post.likedByMe)
             }
 
             override fun onRepost(post: Post) {
@@ -37,7 +39,7 @@ class FeedFragment : Fragment() {
                     type = "text/plain"
                     putExtra(Intent.EXTRA_TEXT, post.content)
                 }
-                viewModel.repost(post.id)
+
                 val repostIntent = Intent.createChooser(
                     intent,
                     getString(R.string.chooser_repost_post)
@@ -59,7 +61,6 @@ class FeedFragment : Fragment() {
             }
 
             override fun onVideo(post: Post) {
-                viewModel.videoById()
                 if (post.video.isNotEmpty()) {
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.video))
                     startActivity(intent)
@@ -75,17 +76,24 @@ class FeedFragment : Fragment() {
         })
 
         binding.list.adapter = adapter
-        viewModel.data.observe(viewLifecycleOwner) { posts ->
-            val startList = adapter.itemCount < posts.size
-            adapter.submitList(posts) {
-                if (startList) {
-                    binding.list.smoothScrollToPosition(0)
-                }
-            }
+        viewModel.data.observe(viewLifecycleOwner) { state ->
+            adapter.submitList(state.posts)
+            binding.progress.isVisible = state.loading
+            binding.errorGroup.isVisible = state.error
+            binding.emptyText.isVisible = state.empty
+        }
+
+        binding.retryButton.setOnClickListener {
+            viewModel.loadPosts()
         }
 
         binding.add.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
+        }
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            viewModel.loadPosts()
+            binding.swipeRefreshLayout.isRefreshing = false
         }
         return binding.root
     }

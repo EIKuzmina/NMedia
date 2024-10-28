@@ -55,7 +55,7 @@ class PostViewHolder(
             base.text = post.content
 
             likes.isChecked = post.likedByMe
-            likes.text = formatNumber(post.likeCount)
+            likes.text = formatNumber(post.likes)
             likes.setOnClickListener {
                 onInteractionListener.onLike(post)
             }
