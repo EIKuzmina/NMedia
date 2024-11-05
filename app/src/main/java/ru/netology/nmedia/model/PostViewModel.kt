@@ -36,23 +36,29 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun loadPosts() {
-        thread {
-            _data.postValue(FeedModel(loading = true))
-            try {
-                val posts = repository.getAll()
-                FeedModel(posts = posts, empty = posts.isEmpty())
-            } catch (e: IOException) {
-                FeedModel(error = true)
-            }.also(_data::postValue)
-        }
+        _data.postValue(FeedModel(loading = true))
+        repository.getAllAsync(object : PostRepository.PostRepositoryCallback<List<Post>> {
+            override fun onSuccess(result: List<Post>) {
+                _data.postValue(FeedModel(posts = result, empty = result.isEmpty()))
+            }
+
+            override fun onError(e: Exception) {
+                _data.postValue(FeedModel(error = true))
+            }
+        })
     }
 
     fun save() {
         edited.value?.let {
-            thread {
-                repository.save(it)
-                _postCreated.postValue(Unit)
-            }
+            repository.saveAsync(it, object : PostRepository.PostRepositoryCallback<Post> {
+                override fun onSuccess(post: Post) {
+                    _postCreated.postValue(Unit)
+                }
+
+                override fun onError(e: Exception) {
+                    edited.value
+                }
+            })
         }
         edited.value = empty
     }
@@ -70,42 +76,63 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun likeById(id: Int, likedByMe: Boolean) {
-        thread {
-            val old = repository.likeById(id, likedByMe)
-            val refreshOld = _data.value?.posts?.map {
-                if (it.id == id) old else it
-            } ?: emptyList()
-            _data.postValue(FeedModel(posts = refreshOld, empty = refreshOld.isEmpty()))
+        repository.likeByIdAsync(id, likedByMe, object : PostRepository.PostRepositoryCallback<Post> {
+            override fun onSuccess(result: Post) {
+                val refreshOld = _data.value?.posts?.map {
+                    if (it.id == id) {
+                        result
+                    } else {
+                        it
+                    }
+                }.orEmpty()
+                val resultList = if (_data.value?.posts == refreshOld) {
+                    listOf(result) + refreshOld
+                } else {
+                    refreshOld
+                }
+                _data.postValue(
+                    _data.value?.copy(posts = resultList)
+                )
             }
-        }
+
+            override fun onError(e: Exception) {
+                _data.postValue(FeedModel(error = true))
+            }
+        })
+    }
 
     fun removeById(id: Int) {
-        thread {
-            val old = _data.value?.posts.orEmpty()
-            _data.postValue(
-                _data.value?.copy(posts = _data.value?.posts.orEmpty()
-                    .filter { it.id != id }
+        val old = _data.value?.posts.orEmpty()
+        repository.removeByIdAsync(id, object : PostRepository.PostRepositoryCallback<Post> {
+            override fun onSuccess(result: Post) {
+                _data.postValue(
+                    _data.value?.copy(posts = _data.value?.posts.orEmpty()
+                        .filter { it.id != id })
                 )
-            )
-            try {
-                repository.removeById(id)
-            } catch (e: IOException) {
+            }
+                            override fun onError(e: Exception) {
                 _data.postValue(_data.value?.copy(posts = old))
             }
-        }
+        })
     }
 
-        fun draftContent(content: String) {
-            val text = content.trim()
-            if (draft.value?.content == text) {
-                return
+    fun draftContent(content: String) {
+        val text = content.trim()
+        if (draft.value?.content == text) {
+            return
+        }
+        draft.value = draft.value?.copy(content = text)
+    }
+
+    fun clearEdit() {
+        edited.value = empty
+    }
+
+    fun repost(id: Int) =
+        repository.repostAsync(id, object : PostRepository.PostRepositoryCallback<Post> {
+            override fun onSuccess(result: Post) {
             }
-            draft.value = draft.value?.copy(content = text)
-        }
-
-        fun clearEdit() {
-            edited.value = empty
-        }
-
-        fun repost(id: Int) = repository.repost(id)
-    }
+            override fun onError(e: Exception) {
+            }
+        })
+}
