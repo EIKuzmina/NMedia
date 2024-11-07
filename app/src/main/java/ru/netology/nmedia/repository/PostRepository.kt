@@ -1,6 +1,6 @@
 package ru.netology.nmedia.repository
 
-import ru.netology.nmedia.Post
+import ru.netology.nmedia.handler.Post
 
 interface PostRepository {
     fun getAllAsync(callback: PostRepositoryCallback<List<Post>>)

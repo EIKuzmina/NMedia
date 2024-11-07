@@ -1,4 +1,5 @@
-package ru.netology.nmedia
+package ru.netology.nmedia.handler
+
 
 data class Post(
     val id: Int = 0,
@@ -11,5 +12,6 @@ data class Post(
     val share: Int = 0,
     val viewByMe: Boolean = false,
     val view: Int = 0,
-    val video: String= ""
+    val video: String= "",
+    val authorAvatar: String?
 )

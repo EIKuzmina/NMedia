@@ -10,10 +10,10 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import ru.netology.nmedia.OnInteractionListener
-import ru.netology.nmedia.Post
+import ru.netology.nmedia.handler.OnInteractionListener
+import ru.netology.nmedia.handler.Post
 import ru.netology.nmedia.model.PostViewModel
-import ru.netology.nmedia.PostsAdapter
+import ru.netology.nmedia.handler.PostsAdapter
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.activity.PostFragment.Companion.idArg

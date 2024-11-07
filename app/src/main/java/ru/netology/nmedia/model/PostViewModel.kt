@@ -4,12 +4,10 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import ru.netology.nmedia.Post
+import ru.netology.nmedia.handler.Post
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
 import ru.netology.nmedia.util.SingleLiveEvent
-import java.io.IOException
-import kotlin.concurrent.thread
 
 private val empty = Post(
     id = 0,
@@ -17,7 +15,8 @@ private val empty = Post(
     author = "",
     likedByMe = false,
     published = "",
-    likes = 0
+    likes = 0,
+    authorAvatar = null
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {

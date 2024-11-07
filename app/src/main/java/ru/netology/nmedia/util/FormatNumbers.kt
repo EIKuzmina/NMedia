@@ -1,4 +1,4 @@
-package ru.netology.nmedia
+package ru.netology.nmedia.util
 
     fun formatNumber (count: Int) : String {
         if (count in (1_000..9_999)) return (count / 100 /10.0).toString() + "K"

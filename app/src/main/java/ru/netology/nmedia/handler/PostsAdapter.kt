@@ -1,4 +1,4 @@
-package ru.netology.nmedia
+package ru.netology.nmedia.handler
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +7,10 @@ import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostBinding
+import ru.netology.nmedia.util.formatNumber
 
 interface OnInteractionListener {
     fun onLike(post: Post) {}
@@ -47,13 +50,13 @@ class PostViewHolder(
     private val binding: CardPostBinding,
     private val onInteractionListener: OnInteractionListener
 ) : RecyclerView.ViewHolder(binding.root) {
-
+    private val url = "http://10.0.2.2:9999"
     fun bind(post: Post) {
         binding.apply {
             author.text = post.author
+            avatar.load("$url/avatars/${post.authorAvatar}")
             published.text = post.published
             base.text = post.content
-
             likes.isChecked = post.likedByMe
             likes.text = formatNumber(post.likes)
             likes.setOnClickListener {
@@ -72,7 +75,7 @@ class PostViewHolder(
                 onInteractionListener.onVideo(post)
             }
 
-            cardPost.setOnClickListener{
+            cardPost.setOnClickListener {
                 onInteractionListener.onCardPost(post)
             }
 
