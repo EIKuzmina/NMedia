@@ -16,7 +16,7 @@ private val empty = Post(
     likedByMe = false,
     published = "",
     likes = 0,
-    authorAvatar = null
+    authorAvatar = ""
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
@@ -102,8 +102,8 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun removeById(id: Int) {
         val old = _data.value?.posts.orEmpty()
-        repository.removeByIdAsync(id, object : PostRepository.PostRepositoryCallback<Post> {
-            override fun onSuccess(result: Post) {
+        repository.removeByIdAsync(id, object : PostRepository.PostRepositoryCallback<Unit> {
+            override fun onSuccess(result: Unit) {
                 _data.postValue(
                     _data.value?.copy(posts = _data.value?.posts.orEmpty()
                         .filter { it.id != id })
@@ -122,16 +122,4 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
         draft.value = draft.value?.copy(content = text)
     }
-
-    fun clearEdit() {
-        edited.value = empty
-    }
-
-    fun repost(id: Int) =
-        repository.repostAsync(id, object : PostRepository.PostRepositoryCallback<Post> {
-            override fun onSuccess(result: Post) {
-            }
-            override fun onError(e: Exception) {
-            }
-        })
 }

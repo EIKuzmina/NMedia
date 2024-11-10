@@ -25,25 +25,29 @@ class PostRepositoryImpl : PostRepository {
         private val jsonType = "application/json".toMediaType()
     }
 
-    private fun <T> enqueuePostRepository
-                (request: Request,
-                 typeToken: Class<T>,
-                 callback: PostRepository.PostRepositoryCallback<T>) {
+    private fun <T> enqueuePostRepository(
+        request: Request,
+        typeToken: Class<T>,
+        callback: PostRepository.PostRepositoryCallback<T>
+    ) {
         client.newCall(request)
             .enqueue(object : Callback {
                 override fun onResponse(call: Call, response: Response) {
                     try {
-                        val result = response.body?.string() ?: throw RuntimeException("body is null")
+                        val result =
+                            response.body?.string() ?: throw RuntimeException("body is null")
                         callback.onSuccess(gson.fromJson(result, typeToken))
                     } catch (e: Exception) {
                         callback.onError(e)
                     }
                 }
+
                 override fun onFailure(call: Call, e: IOException) {
                     callback.onError(e)
                 }
             })
     }
+
     override fun getAllAsync(callback: PostRepository.PostRepositoryCallback<List<Post>>) {
         val request: Request = Request.Builder()
             .url("${BASE_URL}/api/slow/posts")
@@ -59,6 +63,7 @@ class PostRepositoryImpl : PostRepository {
                         callback.onError(e)
                     }
                 }
+
                 override fun onFailure(call: Call, e: IOException) {
                     callback.onError(e)
                 }
@@ -97,12 +102,26 @@ class PostRepositoryImpl : PostRepository {
 
     }
 
-    override fun removeByIdAsync(id: Int, callback: PostRepository.PostRepositoryCallback<Post>) {
+    override fun removeByIdAsync(id: Int, callback: PostRepository.PostRepositoryCallback<Unit>) {
         val request: Request = Request.Builder()
             .delete()
             .url("${BASE_URL}/api/slow/posts/$id")
             .build()
 
-        enqueuePostRepository(request, Post::class.java, callback)
+        client.newCall(request)
+            .enqueue(object : Callback {
+                override fun onResponse(call: Call, response: Response) {
+                    try {
+                        callback.onSuccess(Unit)
+                    } catch (e: Exception) {
+                        callback.onError(e)
+                    }
+                }
+
+                override fun onFailure(call: Call, e: IOException) {
+                    callback.onError(e)
+                }
+            })
     }
 }
+

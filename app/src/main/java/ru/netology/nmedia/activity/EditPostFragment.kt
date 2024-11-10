@@ -35,8 +35,7 @@ class EditPostFragment : Fragment() {
             findNavController().navigateUp()
         }
 
-        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner) {
-            viewModel.clearEdit()
+        viewModel.postCreated.observe(viewLifecycleOwner){
             findNavController().navigateUp()
         }
         return binding.root
