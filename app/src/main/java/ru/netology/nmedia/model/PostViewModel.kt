@@ -1,6 +1,7 @@
 package ru.netology.nmedia.model
 
 import android.app.Application
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -47,6 +48,10 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         })
     }
 
+    fun retrofitError(error: String) {
+        Toast.makeText(getApplication(), "Опаньки...Произошла ошибка", Toast.LENGTH_SHORT).show()
+    }
+
     fun save() {
         edited.value?.let {
             repository.saveAsync(it, object : PostRepository.PostRepositoryCallback<Post> {
@@ -55,7 +60,8 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 }
 
                 override fun onError(e: Exception) {
-                    edited.value
+                    _data.postValue(FeedModel(error = true))
+                    retrofitError(e.toString())
                 }
             })
         }
@@ -75,29 +81,33 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun likeById(id: Int, likedByMe: Boolean) {
-        repository.likeByIdAsync(id, likedByMe, object : PostRepository.PostRepositoryCallback<Post> {
-            override fun onSuccess(result: Post) {
-                val refreshOld = _data.value?.posts?.map {
-                    if (it.id == id) {
-                        result
+        repository.likeByIdAsync(
+            id,
+            likedByMe,
+            object : PostRepository.PostRepositoryCallback<Post> {
+                override fun onSuccess(result: Post) {
+                    val refreshOld = _data.value?.posts?.map {
+                        if (it.id == id) {
+                            result
+                        } else {
+                            it
+                        }
+                    }.orEmpty()
+                    val resultList = if (_data.value?.posts == refreshOld) {
+                        listOf(result) + refreshOld
                     } else {
-                        it
+                        refreshOld
                     }
-                }.orEmpty()
-                val resultList = if (_data.value?.posts == refreshOld) {
-                    listOf(result) + refreshOld
-                } else {
-                    refreshOld
+                    _data.postValue(
+                        _data.value?.copy(posts = resultList)
+                    )
                 }
-                _data.postValue(
-                    _data.value?.copy(posts = resultList)
-                )
-            }
 
-            override fun onError(e: Exception) {
-                _data.postValue(FeedModel(error = true))
-            }
-        })
+                override fun onError(e: Exception) {
+                    _data.postValue(FeedModel(error = true))
+                    retrofitError(e.toString())
+                }
+            })
     }
 
     fun removeById(id: Int) {
@@ -109,8 +119,10 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                         .filter { it.id != id })
                 )
             }
-                            override fun onError(e: Exception) {
-                _data.postValue(_data.value?.copy(posts = old))
+
+            override fun onError(e: Exception) {
+                _data.postValue(FeedModel(error = true))
+                retrofitError(e.toString())
             }
         })
     }
