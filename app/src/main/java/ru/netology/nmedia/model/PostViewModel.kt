@@ -1,7 +1,6 @@
 package ru.netology.nmedia.model
 
 import android.app.Application
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -30,6 +29,9 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit>
         get() = _postCreated
+    private val _retrofitError = SingleLiveEvent<String>()
+    val retrofitError: LiveData<String>
+        get() = _retrofitError
 
     init {
         loadPosts()
@@ -48,20 +50,16 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         })
     }
 
-    fun retrofitError(error: String) {
-        Toast.makeText(getApplication(), "Опаньки...Произошла ошибка", Toast.LENGTH_SHORT).show()
-    }
-
     fun save() {
         edited.value?.let {
             repository.saveAsync(it, object : PostRepository.PostRepositoryCallback<Post> {
                 override fun onSuccess(post: Post) {
+                    loadPosts()
                     _postCreated.postValue(Unit)
                 }
 
                 override fun onError(e: Exception) {
-                    _data.postValue(FeedModel(error = true))
-                    retrofitError(e.toString())
+                    _retrofitError.value = e.message
                 }
             })
         }
@@ -86,26 +84,15 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             likedByMe,
             object : PostRepository.PostRepositoryCallback<Post> {
                 override fun onSuccess(result: Post) {
-                    val refreshOld = _data.value?.posts?.map {
-                        if (it.id == id) {
-                            result
-                        } else {
-                            it
-                        }
-                    }.orEmpty()
-                    val resultList = if (_data.value?.posts == refreshOld) {
-                        listOf(result) + refreshOld
-                    } else {
-                        refreshOld
-                    }
                     _data.postValue(
-                        _data.value?.copy(posts = resultList)
+                        FeedModel(
+                            posts = _data.value?.posts.orEmpty()
+                                .map { if (it.id == result.id) result else it })
                     )
                 }
 
                 override fun onError(e: Exception) {
-                    _data.postValue(FeedModel(error = true))
-                    retrofitError(e.toString())
+                    _retrofitError.value = e.message
                 }
             })
     }
@@ -115,14 +102,12 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         repository.removeByIdAsync(id, object : PostRepository.PostRepositoryCallback<Unit> {
             override fun onSuccess(result: Unit) {
                 _data.postValue(
-                    _data.value?.copy(posts = _data.value?.posts.orEmpty()
-                        .filter { it.id != id })
+                    _data.value?.copy(posts = old.filter { it.id != id })
                 )
             }
 
             override fun onError(e: Exception) {
-                _data.postValue(FeedModel(error = true))
-                retrofitError(e.toString())
+                _retrofitError.value = e.message
             }
         })
     }

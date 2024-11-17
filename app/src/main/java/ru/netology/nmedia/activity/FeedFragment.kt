@@ -10,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.handler.OnInteractionListener
 import ru.netology.nmedia.handler.Post
 import ru.netology.nmedia.model.PostViewModel
@@ -95,6 +96,13 @@ class FeedFragment : Fragment() {
             viewModel.loadPosts()
             binding.swipeRefreshLayout.isRefreshing = false
         }
+
+        viewModel.retrofitError.observe(viewLifecycleOwner, {
+            Snackbar.make(requireView(),
+                "${resources.getString(R.string.error)} $it",
+                Snackbar.LENGTH_LONG).show()
+        })
+
         return binding.root
     }
 }
