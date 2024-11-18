@@ -100,7 +100,9 @@ class FeedFragment : Fragment() {
         viewModel.retrofitError.observe(viewLifecycleOwner, {
             Snackbar.make(requireView(),
                 "${resources.getString(R.string.error)} $it",
-                Snackbar.LENGTH_LONG).show()
+                Snackbar.LENGTH_LONG)
+                .setAnchorView(binding.add)
+                .show()
         })
 
         return binding.root
