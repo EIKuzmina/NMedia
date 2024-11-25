@@ -2,29 +2,24 @@ package ru.netology.nmedia.api
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Call
-import retrofit2.Retrofit
+import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Body
-import retrofit2.http.DELETE
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 import ru.netology.nmedia.BuildConfig
 import ru.netology.nmedia.handler.Post
 
 private const val BASE_URL = "${BuildConfig.BASE_URL}/api/slow/"
 interface PostApiService {
     @GET("posts")
-    fun getAll(): Call<List<Post>>
+    suspend fun getAll(): Response<List<Post>>
     @POST("posts/{id}/likes")
-    fun likeById(@Path("id") id: Int): Call<Post>
+    suspend fun likeById(@Path("id") id: Int): Response<Post>
     @DELETE("posts/{id}/likes")
-    fun disLikeById(@Path("id") id: Int): Call<Post>
+    suspend fun disLikeById(@Path("id") id: Int): Response<Post>
     @DELETE("posts/{id}")
-    fun removeById(@Path("id") id: Int): Call<Unit>
+    suspend fun removeById(@Path("id") id: Int): Response<Unit>
     @POST("posts")
-    fun save(@Body post: Post): Call<Post>
+    suspend fun save(@Body post: Post): Response<Post>
 }
 val logger = HttpLoggingInterceptor().apply {
     if (BuildConfig.DEBUG) {

@@ -1,7 +1,6 @@
 package ru.netology.nmedia.entity
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
 import ru.netology.nmedia.handler.Post
 
 @Entity
@@ -13,17 +12,18 @@ data class PostEntity(
     val content: String,
     val likedByMe: Boolean,
     val likes: Int = 0,
-    val viewByMe: Boolean,
-    val view: Int = 0,
-    val video:String,
     val authorAvatar: String
 ) {
-    fun toPost() = Post(id, author, content, published, likedByMe, likes,
-        viewByMe, view, video, authorAvatar)
+    fun toPost() = Post(id, author, published, content, likedByMe, likes, authorAvatar)
 
     companion object {
         fun fromPost(post: Post) =
-            PostEntity(post.id, post.author, post.content, post.published, post.likedByMe, post.likes,
-                 post.viewByMe, post.view, post.video, post.authorAvatar)
+            PostEntity(
+                post.id, post.author, post.content, post.published,
+                post.likedByMe, post.likes, post.authorAvatar
+            )
     }
 }
+
+    fun List<PostEntity>.toPost(): List<Post> = map(PostEntity::toPost)
+    fun List<Post>.toEntity(): List<PostEntity> = map(PostEntity::fromPost)

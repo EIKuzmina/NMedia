@@ -1,12 +1,8 @@
 package ru.netology.nmedia.handler
 
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.PopupMenu
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.*
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.util.formatNumber
@@ -16,7 +12,6 @@ interface OnInteractionListener {
     fun onRepost(post: Post) {}
     fun onEdit(post: Post) {}
     fun onRemove(post: Post) {}
-    fun onVideo(post: Post) {}
     fun onCardPost(post: Post) {}
 }
 
@@ -51,7 +46,7 @@ class PostViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
     private val url = "http://10.0.2.2:9999"
     fun bind(post: Post) {
-        binding.apply  {
+        binding.apply {
             author.text = post.author
             avatar.load("$url/avatars/${post.authorAvatar}")
             published.text = post.published
@@ -65,9 +60,6 @@ class PostViewHolder(
             cardPost.setOnClickListener {
                 onInteractionListener.onCardPost(post)
             }
-
-            views.isChecked = post.viewByMe
-            views.text = formatNumber(post.view)
 
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
