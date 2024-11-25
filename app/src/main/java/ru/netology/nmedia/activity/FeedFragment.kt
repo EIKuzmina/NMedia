@@ -66,6 +66,7 @@ class FeedFragment : Fragment() {
         binding.list.adapter = adapter
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
             binding.progress.isVisible = state.loading
+            binding.errorGroup.isVisible = state.error
             binding.swipeRefreshLayout.isRefreshing = state.refreshing
             if (state.error) {
                 Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
