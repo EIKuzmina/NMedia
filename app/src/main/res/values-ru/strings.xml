@@ -15,4 +15,5 @@
     <string name="error_loading">"Что-то пошло не так. Попробуйте позднее "</string>
     <string name="retry_loading">Повторить</string>
     <string name="error">Опаньки...Произошла ошибка</string>
+    <string name="recent_posts">Свежие записи</string>
 </resources>

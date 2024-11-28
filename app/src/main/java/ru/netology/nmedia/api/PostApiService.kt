@@ -12,6 +12,8 @@ private const val BASE_URL = "${BuildConfig.BASE_URL}/api/slow/"
 interface PostApiService {
     @GET("posts")
     suspend fun getAll(): Response<List<Post>>
+    @GET("posts/{id}/newer")
+    suspend fun getNewer(@Path("id") id: Int): Response<List<Post>>
     @POST("posts/{id}/likes")
     suspend fun likeById(@Path("id") id: Int): Response<Post>
     @DELETE("posts/{id}/likes")

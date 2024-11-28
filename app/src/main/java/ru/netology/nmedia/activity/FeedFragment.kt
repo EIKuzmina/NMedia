@@ -71,6 +71,7 @@ class FeedFragment : Fragment() {
             if (state.error) {
                 Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
                     .setAction(R.string.retry_loading) { viewModel.loadPosts() }
+                    .setAnchorView(binding.add)
                     .show()
             }
         }
@@ -78,6 +79,17 @@ class FeedFragment : Fragment() {
         viewModel.data.observe(viewLifecycleOwner) { state ->
             adapter.submitList(state.posts)
             binding.emptyText.isVisible = state.empty
+        }
+
+        viewModel.newerCount.observe(viewLifecycleOwner){
+            if (it > 0) {
+                binding.recentPosts.isVisible = true
+            }
+        }
+        binding.recentPosts.setOnClickListener {
+            viewModel.updateShow()
+            it.isVisible = false
+            binding.list.smoothScrollToPosition(0)
         }
 
         binding.retryButton.setOnClickListener {
@@ -90,7 +102,9 @@ class FeedFragment : Fragment() {
 
         binding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.loadPosts()
+            viewModel.updateShow()
             binding.swipeRefreshLayout.isRefreshing = false
+            binding.recentPosts.isVisible = false
         }
 
         return binding.root

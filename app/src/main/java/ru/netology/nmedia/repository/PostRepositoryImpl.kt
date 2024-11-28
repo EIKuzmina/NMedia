@@ -1,6 +1,8 @@
 package ru.netology.nmedia.repository
 
 import androidx.lifecycle.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import okio.IOException
 import ru.netology.nmedia.api.PostsApi
 import ru.netology.nmedia.dao.PostDao
@@ -11,14 +13,14 @@ import ru.netology.nmedia.handler.Post
 class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
     override val data = dao.getAll().map(List<PostEntity>::toPost)
 
-    override suspend fun getAll() {
+    override suspend fun getAll(show: Boolean) {
         try {
             val response = PostsApi.retrofitService.getAll()
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.insert(body.toEntity())
+            dao.insert(body.map { it.copy(show = true) }.toEntity())
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
@@ -26,8 +28,22 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         }
     }
 
+    override fun getNewer(id: Int): Flow<Int> = flow {
+        while (true) {
+            delay(10_000L)
+            val response = PostsApi.retrofitService.getNewer(id)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            dao.insert(body.toEntity())
+            emit(body.size)
+        }
+    }
+        .catch { e -> throw AppError.from(e) }
+
     override suspend fun likeById(id: Int) {
-        val post = data.value?.find { it.id == id }
+        val post = data.firstOrNull()?.find { it.id == id }
         post ?: return
         try {
             if (post.likedByMe) {
@@ -83,5 +99,9 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         } catch (e: Exception) {
             throw UnknownError
         }
+    }
+
+    override suspend fun updateShow() {
+        dao.show()
     }
 }

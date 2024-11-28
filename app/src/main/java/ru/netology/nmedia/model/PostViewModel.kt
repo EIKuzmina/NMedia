@@ -2,6 +2,8 @@ package ru.netology.nmedia.model
 
 import android.app.Application
 import androidx.lifecycle.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.handler.Post
@@ -15,13 +17,21 @@ private val empty = Post(
     likedByMe = false,
     published = "",
     likes = 0,
-    authorAvatar = ""
+    authorAvatar = "",
+    show = true
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: PostRepository =
         PostRepositoryImpl(AppDb.getInstance(context = application).postDao())
-    val data: LiveData<FeedModel> = repository.data.map(::FeedModel)
+    val data: LiveData<FeedModel> = repository.data
+        .map(::FeedModel)
+        .catch { it.printStackTrace() }
+        .asLiveData(Dispatchers.Default)
+    val newerCount = data.switchMap {
+        repository.getNewer(it.posts.firstOrNull()?.id ?: 0)
+            .asLiveData(Dispatchers.Default, 100)
+    }
     private val _dataState = MutableLiveData<FeedModelState>()
     val dataState: LiveData<FeedModelState>
         get() = _dataState
@@ -85,5 +95,9 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         } catch (e: Exception) {
             _dataState.value = FeedModelState(error = true)
         }
+    }
+
+    fun updateShow() = viewModelScope.launch {
+        repository.updateShow()
     }
 }
