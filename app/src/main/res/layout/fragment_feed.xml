@@ -87,6 +87,7 @@
         android:visibility="gone"
         android:textColor="@color/white"
         app:icon="@drawable/baseline_north_24"
+        app:iconTint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
