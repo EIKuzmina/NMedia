@@ -15,6 +15,8 @@ class NewPostFragment : Fragment() {
         var Bundle.textArg by StringArg
     }
 
+    private val viewModel: PostViewModel by activityViewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
