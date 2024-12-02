@@ -20,7 +20,7 @@ class MediaFragment: Fragment() {
     ): View {
         val binding = FragmentMediaBinding.inflate(inflater, container, false)
         arguments?.imageUrl.let {
-            binding.media.load("${BuildConfig.BASE_URL}/media/")
+            binding.media.load("${BuildConfig.BASE_URL}/media/$it")
         }
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             findNavController().navigateUp()

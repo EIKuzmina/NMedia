@@ -41,13 +41,13 @@ class NewPostFragment : Fragment() {
                 inflater.inflate(R.menu.new_post, menu)
             }
 
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId) {
-                    R.id.edit_save -> {
+            override fun onMenuItemSelected(item: MenuItem): Boolean {
+                return when (item.itemId) {
+                    R.id.save -> {
                         fragmentBinding?.let {
                             viewModel.changeContent(it.editSave.text.toString())
                             viewModel.save()
-                            findNavController().navigateUp()
+                            AndroidUtils.hideKeyboard(requireView())
                         }
                         true
                     }
