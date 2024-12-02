@@ -10,6 +10,7 @@ import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.handler.*
 import ru.netology.nmedia.model.PostViewModel
 import ru.netology.nmedia.R
+import ru.netology.nmedia.activity.MediaFragment.Companion.imageUrl
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.activity.PostFragment.Companion.idArg
 import ru.netology.nmedia.databinding.FragmentFeedBinding
@@ -59,6 +60,13 @@ class FeedFragment : Fragment() {
                 findNavController().navigate(
                     R.id.action_feedFragment_to_postFragment,
                     Bundle().also { it.idArg = post.id }
+                )
+            }
+
+            override fun onMedia(post: Post) {
+                findNavController().navigate(
+                    R.id.action_feedFragment_to_mediaFragment,
+                    Bundle().also { it.imageUrl = post.attachment?.url }
                 )
             }
         })

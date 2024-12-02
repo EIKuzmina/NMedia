@@ -103,7 +103,7 @@
         android:checkable="true"
         android:contentDescription="@string/likes"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/video"
+        app:layout_constraintTop_toBottomOf="@id/image"
         app:icon="@drawable/click_likes"
         style="@style/Widget.AppTheme.LikeButton"
         tools:ignore="TouchTargetSizeCheck"
@@ -119,7 +119,7 @@
         android:checkable="true"
         android:contentDescription="@string/reposts"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/video"
+        app:layout_constraintTop_toBottomOf="@id/image"
         app:icon="@drawable/click_repost"
         style="@style/Widget.AppTheme.RepostButton"
         tools:ignore="TouchTargetSizeCheck"
@@ -134,23 +134,21 @@
         android:layout_marginEnd="10dp"
         android:checkable="true"
         android:contentDescription="@string/view_pic"
-        app:layout_constraintTop_toBottomOf="@id/video"
+        app:layout_constraintTop_toBottomOf="@id/image"
         app:layout_constraintEnd_toEndOf="parent"
         app:icon="@drawable/click_view"
         style="@style/Widget.AppTheme.ViewButton"
         tools:ignore="TouchTargetSizeCheck"
         />
 
-    <ImageButton
-        android:id="@+id/video"
-        android:layout_width="220dp"
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="match_parent"
         android:layout_height="220dp"
-        android:background="@mipmap/simpson"
-        android:checkable="true"
-        android:src="@drawable/baseline_play_circle_24"
+        android:layout_marginTop="@dimen/fields_around"
+        android:contentDescription="@string/play_image"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/base"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
+        tools:srcCompat="@mipmap/simpson"
         tools:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>

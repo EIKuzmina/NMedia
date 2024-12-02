@@ -16,7 +16,7 @@
     <string name="cancel" translatable="false">cancel</string>
     <string name="description_post_save" translatable="false">description_post_save</string>
     <string name="channel_remote_name">Server notifications</string>
-    <string name="channel_remote_description" >Notifications from remote server</string>
+    <string name="channel_remote_description">Notifications from remote server</string>
     <string name="notification_user_liked">User %1$s liked %2$s\'s post</string>
     <string name="google_play_unavailable">Google Api Unavailable</string>
     <string name="notification_new_post">User %1$s posted a new post:</string>
@@ -25,4 +25,8 @@
     <string name="retry_loading">Retry</string>
     <string name="error">An error occurred</string>
     <string name="recent_posts">Recent posts</string>
+    <string name="play_image">Image</string>
+    <string name="preview">Preview</string>
+    <string name="description_select_photo">Select photo</string>
+    <string name="description_take_photo">Take photo</string>
 </resources>

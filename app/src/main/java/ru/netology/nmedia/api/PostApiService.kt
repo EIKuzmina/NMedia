@@ -1,12 +1,13 @@
 package ru.netology.nmedia.api
 
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
 import ru.netology.nmedia.BuildConfig
-import ru.netology.nmedia.handler.Post
+import ru.netology.nmedia.handler.*
 
 private const val BASE_URL = "${BuildConfig.BASE_URL}/api/slow/"
 interface PostApiService {
@@ -22,6 +23,9 @@ interface PostApiService {
     suspend fun removeById(@Path("id") id: Int): Response<Unit>
     @POST("posts")
     suspend fun save(@Body post: Post): Response<Post>
+    @Multipart
+    @POST("media")
+    suspend fun upload(@Part media: MultipartBody.Part): Response<Media>
 }
 val logger = HttpLoggingInterceptor().apply {
     if (BuildConfig.DEBUG) {
