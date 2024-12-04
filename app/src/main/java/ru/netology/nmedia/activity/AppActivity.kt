@@ -3,18 +3,23 @@ package ru.netology.nmedia.activity
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
-import android.os.Bundle
+import android.os.*
+import android.view.*
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.viewModels
+import androidx.appcompat.app.*
+import androidx.core.view.MenuProvider
 import androidx.navigation.findNavController
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.gms.common.*
 import com.google.firebase.messaging.FirebaseMessaging
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
+import ru.netology.nmedia.auth.AppAuth
+import ru.netology.nmedia.model.AuthViewModel
 
 class AppActivity : AppCompatActivity(R.layout.activity_app) {
+    private val viewModel: AuthViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestNotificationsPermission()
@@ -33,7 +38,57 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
                         textArg = text
                     })
             }
+
+            viewModel.data.observe(this) {
+                invalidateOptionsMenu()
+            }
+
             checkGoogleApiAvailability()
+
+            addMenuProvider(object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    menuInflater.inflate(R.menu.menu_main, menu)
+                }
+
+                override fun onPrepareMenu(menu: Menu) {
+                    menu.setGroupVisible(R.id.authenticated, viewModel.authenticated)
+                    menu.setGroupVisible(R.id.unauthenticated, !viewModel.authenticated)
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                    return when (menuItem.itemId) {
+                        R.id.signin -> {
+                            findNavController(R.id.nav_host_fragment).navigate(
+                                R.id.action_feedFragment_to_fragmentSignIn
+                            )
+                            true
+                        }
+
+                        R.id.signup -> {
+                            findNavController(R.id.nav_host_fragment).navigate(
+                                R.id.action_feedFragment_to_fragmentSignUp
+                            )
+                            true
+                        }
+
+                        R.id.signout -> {
+                            AlertDialog.Builder(this@AppActivity)
+                                .setMessage(R.string.sign_out_dialog)
+                                .setPositiveButton(R.string.but_yes) { dialog, id ->
+                                    AppAuth.getInstance().removeAuth()
+                                    findNavController(R.id.nav_host_fragment).navigateUp()
+                                }
+                                .setNegativeButton(R.string.but_no) { dialog, id ->
+                                    return@setNegativeButton
+                                }
+                                .show()
+                            true
+                        }
+
+                        else -> false
+                    }
+                }
+            })
         }
     }
 
@@ -50,7 +105,6 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
         requestPermissions(arrayOf(permission), 1)
     }
 
-
     private fun checkGoogleApiAvailability() {
         with(GoogleApiAvailability.getInstance()) {
             val code = isGooglePlayServicesAvailable(this@AppActivity)
@@ -61,7 +115,11 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
                 getErrorDialog(this@AppActivity, code, 9000)?.show()
                 return
             }
-            Toast.makeText(this@AppActivity, R.string.google_play_unavailable, Toast.LENGTH_LONG)
+            Toast.makeText(
+                this@AppActivity,
+                R.string.google_play_unavailable,
+                Toast.LENGTH_LONG
+            )
                 .show()
         }
 

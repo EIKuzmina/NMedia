@@ -7,6 +7,7 @@ import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
 import ru.netology.nmedia.BuildConfig
+import ru.netology.nmedia.auth.*
 import ru.netology.nmedia.handler.*
 
 private const val BASE_URL = "${BuildConfig.BASE_URL}/api/slow/"
@@ -26,17 +27,37 @@ interface PostApiService {
     @Multipart
     @POST("media")
     suspend fun upload(@Part media: MultipartBody.Part): Response<Media>
+    @FormUrlEncoded
+    @POST("users/authentication")
+    suspend fun updateUser(@Field("login") login: String,
+                           @Field("pass") pass: String): Response<AuthState>
+    @FormUrlEncoded
+    @POST("users/registration")
+    suspend fun registrationUser(@Field("name") name: String,
+                                 @Field("login") login: String,
+                                 @Field("pass") pass: String): Response<AuthState>
 }
 val logger = HttpLoggingInterceptor().apply {
     if (BuildConfig.DEBUG) {
         level = HttpLoggingInterceptor.Level.BODY
     }
 }
-val client = OkHttpClient.Builder().addInterceptor(logger).build()
+private val okhttp = OkHttpClient.Builder()
+    .addInterceptor(logger)
+    .addInterceptor { chain ->
+        AppAuth.getInstance().authStateFlow.value.token?.let { token ->
+            val newRequest = chain.request().newBuilder()
+                .addHeader("Authorization", token)
+                .build()
+            return@addInterceptor chain.proceed(newRequest)
+        }
+        chain.proceed(chain.request())
+    }
+    .build()
 
 private val retrofit = Retrofit.Builder()
     .baseUrl(BASE_URL)
-    .client(client)
+    .client(okhttp)
     .addConverterFactory(GsonConverterFactory.create())
     .build()
 

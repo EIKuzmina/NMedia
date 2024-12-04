@@ -8,6 +8,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okio.IOException
 import ru.netology.nmedia.api.PostsApi
+import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.entity.*
 import ru.netology.nmedia.error.*
@@ -33,7 +34,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
 
     override fun getNewer(id: Int): Flow<Int> = flow {
         while (true) {
-            delay(10_000L)
+            delay(120_000)
             val response = PostsApi.retrofitService.getNewer(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
@@ -140,4 +141,34 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             throw UnknownError
         }
     }
+
+    override suspend fun authentication(login: String, pass: String) {
+        try {
+            val response = PostsApi.retrofitService.updateUser(login, pass)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+            val authState = response.body() ?: throw ApiError(response.code(), response.message())
+            authState.token?.let { AppAuth.getInstance().setAuth(authState.id, it) }
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
+    override suspend fun registration(name: String, login: String, pass: String) {
+        try {
+            val response = PostsApi.retrofitService.registrationUser(name, login, pass)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+            val authState = response.body() ?: throw ApiError(response.code(), response.message())
+            authState.token?.let { AppAuth.getInstance().setAuth(authState.id, it) }
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
+
 }

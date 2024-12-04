@@ -23,7 +23,6 @@ class NewPostFragment : Fragment() {
     }
 
     private var fragmentBinding: FragmentNewPostBinding? = null
-    private val viewModel: PostViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,7 +50,6 @@ class NewPostFragment : Fragment() {
                         }
                         true
                     }
-
                     else -> false
                 }
             }

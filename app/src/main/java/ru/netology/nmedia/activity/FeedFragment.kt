@@ -14,6 +14,7 @@ import ru.netology.nmedia.activity.MediaFragment.Companion.imageUrl
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.activity.PostFragment.Companion.idArg
 import ru.netology.nmedia.databinding.FragmentFeedBinding
+import ru.netology.nmedia.model.AuthViewModel
 
 class FeedFragment : Fragment() {
     override fun onCreateView(
@@ -23,9 +24,14 @@ class FeedFragment : Fragment() {
     ): View {
         val binding = FragmentFeedBinding.inflate(inflater, container, false)
         val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
+        val viewModelAuth: AuthViewModel by viewModels(ownerProducer = ::requireParentFragment)
         val adapter = PostsAdapter(object : OnInteractionListener {
 
             override fun onLike(post: Post) {
+                if (!viewModelAuth.authenticated) {
+                    findNavController().navigate(R.id.action_feedFragment_to_fragmentSignIn)
+                    return
+                } else
                 viewModel.likeById(post.id, post.likedByMe)
             }
 
@@ -44,6 +50,10 @@ class FeedFragment : Fragment() {
             }
 
             override fun onRemove(post: Post) {
+                if (!viewModelAuth.authenticated) {
+                    findNavController().navigate(R.id.action_feedFragment_to_fragmentSignIn)
+                    return
+                }
                 viewModel.removeById(post.id)
             }
 
@@ -105,6 +115,10 @@ class FeedFragment : Fragment() {
         }
 
         binding.add.setOnClickListener {
+            if (!viewModelAuth.authenticated) {
+                findNavController().navigate(R.id.action_feedFragment_to_fragmentSignIn)
+                return@setOnClickListener
+            }
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
         }
 

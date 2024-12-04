@@ -2,6 +2,7 @@ package ru.netology.nmedia.handler
 
 import android.view.*
 import android.widget.PopupMenu
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.*
 import com.google.gson.Gson
 import ru.netology.nmedia.BuildConfig.BASE_URL
@@ -74,9 +75,12 @@ class PostViewHolder(
                 onInteractionListener.onMedia(post)
             }
 
+            menu.isVisible = post.ownedByMe
+
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)
+                    menu.setGroupVisible(R.id.owned, post.ownedByMe)
                     setOnMenuItemClickListener { item ->
                         when (item.itemId) {
                             R.id.remove -> {
@@ -88,7 +92,6 @@ class PostViewHolder(
                                 onInteractionListener.onEdit(post)
                                 true
                             }
-
                             else -> false
                         }
                     }

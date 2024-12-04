@@ -29,4 +29,14 @@
     <string name="preview">Preview</string>
     <string name="description_select_photo">Select photo</string>
     <string name="description_take_photo">Take photo</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="author">Name</string>
+    <string name="password_confirm">Confirm password</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="sign_out_dialog">Are you sure?</string>
+    <string name="but_yes">YES</string>
+    <string name="but_no">NO</string>
 </resources>

@@ -5,6 +5,6 @@
         android:id="@+id/save"
         android:icon="@drawable/baseline_check_24"
         android:title="@string/description_post_save"
-        android:iconTintMode="@color/white"
+        app:tint="?colorSurface"
         app:showAsAction="always" />
 </menu>
