@@ -1,5 +1,6 @@
 package ru.netology.nmedia.activity
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
@@ -27,6 +28,7 @@ class FeedFragment : Fragment() {
         val viewModelAuth: AuthViewModel by viewModels(ownerProducer = ::requireParentFragment)
         val adapter = PostsAdapter(object : OnInteractionListener {
 
+            @SuppressLint("SuspiciousIndentation")
             override fun onLike(post: Post) {
                 if (!viewModelAuth.authenticated) {
                     findNavController().navigate(R.id.action_feedFragment_to_fragmentSignIn)
