@@ -38,58 +38,58 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
                         textArg = text
                     })
             }
+        }
 
-            viewModel.data.observe(this) {
-                invalidateOptionsMenu()
+        viewModel.data.observe(this) {
+            invalidateOptionsMenu()
+        }
+
+        checkGoogleApiAvailability()
+
+        addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.menu_main, menu)
             }
 
-            checkGoogleApiAvailability()
+            override fun onPrepareMenu(menu: Menu) {
+                menu.setGroupVisible(R.id.authenticated, viewModel.authenticated)
+                menu.setGroupVisible(R.id.unauthenticated, !viewModel.authenticated)
+            }
 
-            addMenuProvider(object : MenuProvider {
-                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                    menuInflater.inflate(R.menu.menu_main, menu)
-                }
-
-                override fun onPrepareMenu(menu: Menu) {
-                    menu.setGroupVisible(R.id.authenticated, viewModel.authenticated)
-                    menu.setGroupVisible(R.id.unauthenticated, !viewModel.authenticated)
-                }
-
-                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                    return when (menuItem.itemId) {
-                        R.id.signin -> {
-                            findNavController(R.id.nav_host_fragment).navigate(
-                                R.id.action_feedFragment_to_fragmentSignIn
-                            )
-                            true
-                        }
-
-                        R.id.signup -> {
-                            findNavController(R.id.nav_host_fragment).navigate(
-                                R.id.action_feedFragment_to_fragmentSignUp
-                            )
-                            true
-                        }
-
-                        R.id.signout -> {
-                            AlertDialog.Builder(this@AppActivity)
-                                .setMessage(R.string.sign_out_dialog)
-                                .setPositiveButton(R.string.but_yes) { dialog, id ->
-                                    AppAuth.getInstance().removeAuth()
-                                    findNavController(R.id.nav_host_fragment).navigateUp()
-                                }
-                                .setNegativeButton(R.string.but_no) { dialog, id ->
-                                    return@setNegativeButton
-                                }
-                                .show()
-                            true
-                        }
-
-                        else -> false
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.signin -> {
+                        findNavController(R.id.nav_host_fragment).navigate(
+                            R.id.action_feedFragment_to_fragmentSignIn
+                        )
+                        true
                     }
+
+                    R.id.signup -> {
+                        findNavController(R.id.nav_host_fragment).navigate(
+                            R.id.action_feedFragment_to_fragmentSignUp
+                        )
+                        true
+                    }
+
+                    R.id.signout -> {
+                        AlertDialog.Builder(this@AppActivity)
+                            .setMessage(R.string.sign_out_dialog)
+                            .setPositiveButton(R.string.but_yes) { dialog, id ->
+                                AppAuth.getInstance().removeAuth()
+                                findNavController(R.id.nav_host_fragment).navigateUp()
+                            }
+                            .setNegativeButton(R.string.but_no) { dialog, id ->
+                                return@setNegativeButton
+                            }
+                            .show()
+                        true
+                    }
+
+                    else -> false
                 }
-            })
-        }
+            }
+        })
     }
 
     private fun requestNotificationsPermission() {

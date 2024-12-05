@@ -23,7 +23,7 @@ class NewPostFragment : Fragment() {
     }
 
     private var fragmentBinding: FragmentNewPostBinding? = null
-
+    private var menuProvider: MenuProvider? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,7 +35,7 @@ class NewPostFragment : Fragment() {
         arguments?.textArg?.let(binding.editSave::setText)
         fragmentBinding = binding
 
-        requireActivity().addMenuProvider(object : MenuProvider {
+        val menuProvider = object : MenuProvider {
             override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
                 inflater.inflate(R.menu.new_post, menu)
             }
@@ -53,7 +53,11 @@ class NewPostFragment : Fragment() {
                     else -> false
                 }
             }
-        })
+        }
+
+        menuProvider?.let {
+            requireActivity().addMenuProvider(it)
+        }
 
         val pickPhotoLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -105,10 +109,14 @@ class NewPostFragment : Fragment() {
         viewModel.postCreated.observe(viewLifecycleOwner) {
             findNavController().navigateUp()
         }
+
         return binding.root
     }
     override fun onDestroyView() {
         fragmentBinding = null
+        menuProvider?.let {
+            requireActivity().removeMenuProvider(it)
+        }
         super.onDestroyView()
     }
 }
