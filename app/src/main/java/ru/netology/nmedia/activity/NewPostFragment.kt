@@ -35,7 +35,7 @@ class NewPostFragment : Fragment() {
         arguments?.textArg?.let(binding.editSave::setText)
         fragmentBinding = binding
 
-        val menuProvider = object : MenuProvider {
+        menuProvider = object : MenuProvider {
             override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
                 inflater.inflate(R.menu.new_post, menu)
             }
