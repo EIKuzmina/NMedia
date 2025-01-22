@@ -11,7 +11,9 @@ import ru.netology.nmedia.auth.*
 import ru.netology.nmedia.handler.*
 
 private const val BASE_URL = "${BuildConfig.BASE_URL}/api/slow/"
-interface PostApiService {
+interface ApiService {
+    @POST("users/push-tokens")
+    suspend fun sendPushToken(@Body pushToken: PushToken): Response<Unit>
     @GET("posts")
     suspend fun getAll(): Response<List<Post>>
     @GET("posts/{id}/newer")
@@ -61,8 +63,8 @@ private val retrofit = Retrofit.Builder()
     .addConverterFactory(GsonConverterFactory.create())
     .build()
 
-object PostsApi {
-    val retrofitService : PostApiService by lazy {
-        retrofit.create(PostApiService::class.java)
+object Api {
+    val retrofitService : ApiService by lazy {
+        retrofit.create(ApiService::class.java)
     }
 }
