@@ -6,11 +6,12 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.fragment.app.*
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.databinding.FragmentSignUpBinding
 import ru.netology.nmedia.model.AuthViewModel
 import ru.netology.nmedia.util.AndroidUtils
 
-
+@AndroidEntryPoint
 class FragmentSignUp : Fragment() {
     private val viewModelAuth: AuthViewModel by viewModels(ownerProducer = ::requireParentFragment)
     override fun onCreateView(

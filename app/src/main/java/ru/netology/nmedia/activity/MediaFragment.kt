@@ -5,11 +5,13 @@ import androidx.fragment.app.Fragment
 import android.view.*
 import androidx.activity.addCallback
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.BuildConfig
 import ru.netology.nmedia.databinding.FragmentMediaBinding
 import ru.netology.nmedia.handler.*
 import ru.netology.nmedia.util.StringArg
 
+@AndroidEntryPoint
 class MediaFragment: Fragment() {
     companion object {
         var Bundle.imageUrl: String? by StringArg

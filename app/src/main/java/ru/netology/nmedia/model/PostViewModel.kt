@@ -1,19 +1,18 @@
 package ru.netology.nmedia.model
 
-import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.*
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
-import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.handler.MediaUpload
 import ru.netology.nmedia.handler.Post
 import ru.netology.nmedia.repository.*
 import ru.netology.nmedia.util.SingleLiveEvent
 import java.io.File
+import javax.inject.Inject
 
 private val empty = Post(
     id = 0,
@@ -29,17 +28,16 @@ private val empty = Post(
 )
 private val noPhoto = PhotoModel()
 
-@ExperimentalCoroutinesApi
-class PostViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: PostRepository =
-        PostRepositoryImpl(AppDb.getInstance(context = application).postDao())
-    val data: LiveData<FeedModel> = AppAuth.getInstance()
+@HiltViewModel
+class PostViewModel @Inject constructor(private val repository: PostRepository, appAuth: AppAuth)
+    : ViewModel() {
+    val data: LiveData<FeedModel> = appAuth
         .authStateFlow
         .flatMapLatest { (myId, _)->
             repository.data
                 .map { posts ->
                     FeedModel(
-                        posts.map { it.copy(ownedByMe = it.authorId.toLong() == myId) },
+                        posts.map { it.copy(ownedByMe = it.authorId == myId) },
                         posts.isEmpty()
                     )
                 }

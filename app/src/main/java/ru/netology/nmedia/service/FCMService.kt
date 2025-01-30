@@ -11,13 +11,18 @@ import android.os.Build
 import androidx.core.app.*
 import com.google.firebase.messaging.*
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.AppActivity
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.handler.PushMessage
+import javax.inject.Inject
 import kotlin.random.Random
 
+@AndroidEntryPoint
 class FCMService : FirebaseMessagingService() {
+    @Inject
+    lateinit var appAuth: AppAuth
     private val channelId = "channel"
     private val gson = Gson()
 
@@ -37,11 +42,11 @@ class FCMService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         val pushMessage = gson.fromJson(message.data["content"], PushMessage::class.java)
-        val appAuthToken = AppAuth.getInstance().authStateFlow.value.id.toInt()
+        val appAuthToken = appAuth.authStateFlow.value.id.toInt()
         when (pushMessage.recipientId) {
             appAuthToken, null
                 -> notification(pushMessage.content)
-            else -> AppAuth.getInstance().sendPushToken()
+            else -> appAuth.sendPushToken()
         }
         message.data["action"]?.let { action ->
             try {
@@ -139,7 +144,7 @@ class FCMService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
-        AppAuth.getInstance().sendPushToken(token)
+        appAuth.sendPushToken(token)
     }
 
     private fun checkPermission() {
