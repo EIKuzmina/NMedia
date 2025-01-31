@@ -12,11 +12,13 @@ import androidx.navigation.fragment.findNavController
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.model.PostViewModel
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
 import ru.netology.nmedia.util.*
 
+@AndroidEntryPoint
 class NewPostFragment : Fragment() {
     companion object {
         var Bundle.textArg by StringArg
@@ -30,7 +32,7 @@ class NewPostFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentNewPostBinding.inflate(inflater, container, false)
-        val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
+        val viewModel: PostViewModel by activityViewModels()
         binding.editSave.requestFocus()
         arguments?.textArg?.let(binding.editSave::setText)
         fragmentBinding = binding

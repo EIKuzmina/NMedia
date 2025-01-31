@@ -12,13 +12,22 @@ import androidx.core.view.MenuProvider
 import androidx.navigation.findNavController
 import com.google.android.gms.common.*
 import com.google.firebase.messaging.FirebaseMessaging
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.model.AuthViewModel
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class AppActivity : AppCompatActivity(R.layout.activity_app) {
-    private val viewModel: AuthViewModel by viewModels()
+    @Inject
+    lateinit var appAuth: AppAuth
+    @Inject
+    lateinit var firebaseMessaging: FirebaseMessaging
+    @Inject
+    lateinit var googleApiAvailability: GoogleApiAvailability
+    private val viewModel by viewModels<AuthViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,10 +47,6 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
                         textArg = text
                     })
             }
-        }
-
-        viewModel.data.observe(this) {
-            invalidateOptionsMenu()
         }
 
         checkGoogleApiAvailability()
@@ -76,7 +81,7 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
                         AlertDialog.Builder(this@AppActivity)
                             .setMessage(R.string.sign_out_dialog)
                             .setPositiveButton(R.string.but_yes) { dialog, id ->
-                                AppAuth.getInstance().removeAuth()
+                                appAuth.removeAuth()
                                 findNavController(R.id.nav_host_fragment).navigateUp()
                             }
                             .setNegativeButton(R.string.but_no) { dialog, id ->
@@ -106,7 +111,7 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
     }
 
     private fun checkGoogleApiAvailability() {
-        with(GoogleApiAvailability.getInstance()) {
+        with(googleApiAvailability) {
             val code = isGooglePlayServicesAvailable(this@AppActivity)
             if (code == ConnectionResult.SUCCESS) {
                 return@with
@@ -123,7 +128,7 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
                 .show()
         }
 
-        FirebaseMessaging.getInstance().token.addOnSuccessListener {
+        firebaseMessaging.token.addOnSuccessListener {
             println(it)
         }
     }

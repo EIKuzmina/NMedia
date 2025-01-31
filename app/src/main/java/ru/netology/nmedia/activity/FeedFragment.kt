@@ -8,6 +8,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.*
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.handler.*
 import ru.netology.nmedia.model.PostViewModel
 import ru.netology.nmedia.R
@@ -17,6 +18,7 @@ import ru.netology.nmedia.activity.PostFragment.Companion.idArg
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.model.AuthViewModel
 
+@AndroidEntryPoint
 class FeedFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -24,7 +26,7 @@ class FeedFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentFeedBinding.inflate(inflater, container, false)
-        val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
+        val viewModel: PostViewModel by activityViewModels()
         val viewModelAuth: AuthViewModel by viewModels(ownerProducer = ::requireParentFragment)
         val adapter = PostsAdapter(object : OnInteractionListener {
 
