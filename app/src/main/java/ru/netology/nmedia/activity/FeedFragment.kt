@@ -1,14 +1,15 @@
 package ru.netology.nmedia.activity
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.core.view.isVisible
 import androidx.fragment.app.*
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.snackbar.Snackbar
+import androidx.paging.LoadState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import ru.netology.nmedia.handler.*
 import ru.netology.nmedia.model.PostViewModel
 import ru.netology.nmedia.R
@@ -20,23 +21,20 @@ import ru.netology.nmedia.model.AuthViewModel
 
 @AndroidEntryPoint
 class FeedFragment : Fragment() {
+    val viewModel: PostViewModel by activityViewModels()
+    val viewModelAuth: AuthViewModel by activityViewModels()
+
+    @Suppress("DEPRECATION")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentFeedBinding.inflate(inflater, container, false)
-        val viewModel: PostViewModel by activityViewModels()
-        val viewModelAuth: AuthViewModel by viewModels(ownerProducer = ::requireParentFragment)
         val adapter = PostsAdapter(object : OnInteractionListener {
 
-            @SuppressLint("SuspiciousIndentation")
             override fun onLike(post: Post) {
-                if (!viewModelAuth.authenticated) {
-                    findNavController().navigate(R.id.action_feedFragment_to_fragmentSignIn)
-                    return
-                } else
-                viewModel.likeById(post.id, post.likedByMe)
+                viewModel.like(post)
             }
 
             override fun onRepost(post: Post) {
@@ -86,28 +84,21 @@ class FeedFragment : Fragment() {
         })
 
         binding.list.adapter = adapter
-        viewModel.dataState.observe(viewLifecycleOwner) { state ->
-            binding.progress.isVisible = state.loading
-            binding.errorGroup.isVisible = state.error
-            binding.swipeRefreshLayout.isRefreshing = state.refreshing
-            if (state.error) {
-                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
-                    .setAction(R.string.retry_loading) { viewModel.loadPosts() }
-                    .setAnchorView(binding.add)
-                    .show()
+        lifecycleScope.launchWhenCreated {
+            viewModel.data.collectLatest {
+                adapter.submitData(it)
             }
         }
 
-        viewModel.data.observe(viewLifecycleOwner) { state ->
-            adapter.submitList(state.posts)
-            binding.emptyText.isVisible = state.empty
-        }
-
-        viewModel.newerCount.observe(viewLifecycleOwner){
-            if (it > 0) {
-                binding.recentPosts.isVisible = true
+        lifecycleScope.launchWhenCreated {
+            adapter.loadStateFlow.collectLatest {
+                binding.swipeRefreshLayout.isRefreshing =
+                    it.refresh is LoadState.Loading
+                            || it.append is LoadState.Loading
+                            || it.prepend is LoadState.Loading
             }
         }
+
         binding.recentPosts.setOnClickListener {
             viewModel.updateShow()
             it.isVisible = false
@@ -116,6 +107,10 @@ class FeedFragment : Fragment() {
 
         binding.retryButton.setOnClickListener {
             viewModel.loadPosts()
+        }
+
+        viewModelAuth.data.observe(viewLifecycleOwner) {
+            adapter.refresh()
         }
 
         binding.add.setOnClickListener {
@@ -127,10 +122,7 @@ class FeedFragment : Fragment() {
         }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.loadPosts()
-            viewModel.updateShow()
-            binding.swipeRefreshLayout.isRefreshing = false
-            binding.recentPosts.isVisible = false
+            adapter.refresh()
         }
 
         return binding.root

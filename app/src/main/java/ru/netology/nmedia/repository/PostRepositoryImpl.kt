@@ -1,6 +1,7 @@
 package ru.netology.nmedia.repository
 
-import androidx.lifecycle.*
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -20,7 +21,14 @@ import javax.inject.Singleton
 class PostRepositoryImpl @Inject constructor
     (private val dao: PostDao, private val apiService: ApiService, private val auth: AppAuth)
     : PostRepository {
-    override val data = dao.getAll().map(List<PostEntity>::toPost)
+    override val data = Pager(
+        config = PagingConfig(pageSize = 10, enablePlaceholders = false),
+        pagingSourceFactory = {
+            PostPagingSource(
+                apiService
+            )
+        }
+    ).flow
 
     override suspend fun getAll(show: Boolean) {
         try {
@@ -52,12 +60,10 @@ class PostRepositoryImpl @Inject constructor
         .catch { e -> throw AppError.from(e) }
         .flowOn(Dispatchers.Default)
 
-    override suspend fun likeById(id: Int) {
-        val post = data.firstOrNull()?.find { it.id == id }
-        post ?: return
+    override suspend fun likeById(post: Post) {
         try {
             if (post.likedByMe) {
-                dao.dislikeById(id)
+                dao.dislikeById(post.id)
                 val response = apiService.disLikeById(post.id)
                 if (!response.isSuccessful) {
                     throw ApiError(response.code(), response.message())
@@ -65,7 +71,7 @@ class PostRepositoryImpl @Inject constructor
                 val body = response.body() ?: throw ApiError(response.code(), response.message())
                 dao.insert(PostEntity.fromPost(body))
             } else {
-                dao.likeById(id)
+                dao.likeById(post.id)
                 val response = apiService.likeById(post.id)
                 if (!response.isSuccessful) {
                     throw ApiError(response.code(), response.message())

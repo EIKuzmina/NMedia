@@ -13,7 +13,7 @@ import ru.netology.nmedia.util.AndroidUtils
 
 @AndroidEntryPoint
 class FragmentSignUp : Fragment() {
-    private val viewModelAuth: AuthViewModel by viewModels(ownerProducer = ::requireParentFragment)
+    private val viewModelAuth: AuthViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
