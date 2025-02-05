@@ -3,10 +3,10 @@ package ru.netology.nmedia.model
 import android.net.Uri
 import androidx.lifecycle.*
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
@@ -34,11 +34,12 @@ private val noPhoto = PhotoModel()
 @HiltViewModel
 class PostViewModel @Inject constructor(private val repository: PostRepository, appAuth: AppAuth)
     : ViewModel() {
-    @OptIn(ExperimentalCoroutinesApi::class)
+    val cashed: Flow<PagingData<Post>> = repository.dataPaging.cachedIn(viewModelScope)
+
     val data: Flow<PagingData<Post>> = appAuth
         .authStateFlow
         .flatMapLatest { auth ->
-            repository.data
+            repository.dataPaging
                 .map { posts ->
                         posts.map { it.copy(ownedByMe = auth.id == it.authorId) }
                 }
@@ -60,9 +61,8 @@ class PostViewModel @Inject constructor(private val repository: PostRepository, 
     }
 
     fun loadPosts() = viewModelScope.launch {
+        _dataState.value = FeedModelState(loading = true)
         try {
-            _dataState.value = FeedModelState(loading = true)
-            repository.getAll()
             _dataState.value = FeedModelState()
         } catch (e: Exception) {
             _dataState.value = FeedModelState(error = true)

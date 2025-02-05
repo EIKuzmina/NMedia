@@ -1,7 +1,10 @@
 package ru.netology.nmedia.repository
 
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -11,6 +14,8 @@ import okio.IOException
 import ru.netology.nmedia.api.ApiService
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.dao.PostDao
+import ru.netology.nmedia.dao.PostRemoteKeyDao
+import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.entity.*
 import ru.netology.nmedia.error.*
 import ru.netology.nmedia.handler.*
@@ -18,47 +23,26 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class PostRepositoryImpl @Inject constructor
-    (private val dao: PostDao, private val apiService: ApiService, private val auth: AppAuth)
-    : PostRepository {
-    override val data = Pager(
-        config = PagingConfig(pageSize = 10, enablePlaceholders = false),
-        pagingSourceFactory = {
-            PostPagingSource(
-                apiService
-            )
-        }
+class PostRepositoryImpl @Inject constructor(
+    private val dao: PostDao,
+    private val apiService: ApiService,
+    private val postRemoteKeyDao: PostRemoteKeyDao,
+    override val appDb: AppDb,
+    private val auth: AppAuth
+) : PostRepository {
+
+    @OptIn(ExperimentalPagingApi::class)
+    override val dataPaging = Pager(
+        config = PagingConfig(pageSize = 5, enablePlaceholders = false),
+        pagingSourceFactory = { dao.getPagingSource() },
+        remoteMediator = PostRemoteMediator(
+            service = apiService,
+            postDao = dao,
+            postRemoteKeyDao = postRemoteKeyDao,
+            db = appDb
+        )
     ).flow
-
-    override suspend fun getAll(show: Boolean) {
-        try {
-            val response = apiService.getAll()
-            if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
-            }
-            val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.insert(body.map { it.copy(show = true) }.toEntity())
-        } catch (e: IOException) {
-            throw NetworkError
-        } catch (e: Exception) {
-            throw UnknownError
-        }
-    }
-
-    override fun getNewer(id: Int): Flow<Int> = flow {
-        while (true) {
-            delay(120_000)
-            val response = apiService.getNewer(id)
-            if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
-            }
-            val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.insert(body.toEntity())
-            emit(body.size)
-        }
-    }
-        .catch { e -> throw AppError.from(e) }
-        .flowOn(Dispatchers.Default)
+        .map { it.map(PostEntity::toPost) }
 
     override suspend fun likeById(post: Post) {
         try {

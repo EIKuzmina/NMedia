@@ -1,14 +1,20 @@
 package ru.netology.nmedia.dao
 
+import androidx.paging.PagingSource
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 import ru.netology.nmedia.entity.PostEntity
 import ru.netology.nmedia.handler.AttachmentType
+import ru.netology.nmedia.handler.Post
 
 @Dao
 interface PostDao {
-    @Query("SELECT * FROM PostEntity WHERE show = 1 ORDER BY id DESC")
-    fun getAll(): Flow<List<PostEntity>>
+
+    @Query("SELECT * FROM PostEntity WHERE show = 0 ORDER BY id DESC")
+    fun getPagingSource(): PagingSource<Int, PostEntity>
+
+    @Query("DELETE FROM PostEntity")
+    suspend fun clear()
 
     @Query("SELECT COUNT(*) == 0 FROM PostEntity")
     suspend fun isEmpty(): Boolean
