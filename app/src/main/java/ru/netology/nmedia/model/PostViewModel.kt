@@ -2,16 +2,12 @@ package ru.netology.nmedia.model
 
 import android.net.Uri
 import androidx.lifecycle.*
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import androidx.paging.map
+import androidx.paging.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
-import ru.netology.nmedia.handler.MediaUpload
-import ru.netology.nmedia.handler.Post
+import ru.netology.nmedia.handler.*
 import ru.netology.nmedia.repository.*
 import ru.netology.nmedia.util.SingleLiveEvent
 import java.io.File
@@ -32,18 +28,21 @@ private val empty = Post(
 private val noPhoto = PhotoModel()
 
 @HiltViewModel
-class PostViewModel @Inject constructor(private val repository: PostRepository, appAuth: AppAuth)
-    : ViewModel() {
-    val cashed: Flow<PagingData<Post>> = repository.dataPaging.cachedIn(viewModelScope)
+class PostViewModel @Inject constructor(private val repository: PostRepository, appAuth: AppAuth) :
+    ViewModel() {
+    private val cached = repository.dataPaging.cachedIn(viewModelScope)
 
-    val data: Flow<PagingData<Post>> = appAuth
+    val data: Flow<PagingData<FeedItem>> = appAuth
         .authStateFlow
-        .flatMapLatest { auth ->
-            repository.dataPaging
-                .map { posts ->
-                        posts.map { it.copy(ownedByMe = auth.id == it.authorId) }
+        .flatMapLatest { (myId, _) ->
+            cached.map { pagingData ->
+                pagingData.map { post ->
+                    if (post is Post) {
+                        post.copy(ownedByMe = post.authorId == myId)
+                    } else post
                 }
-        }.flowOn(Dispatchers.Default)
+            }
+        }
 
     private val _dataState = MutableLiveData<FeedModelState>()
     val dataState: LiveData<FeedModelState>
@@ -74,7 +73,7 @@ class PostViewModel @Inject constructor(private val repository: PostRepository, 
             _postCreated.value = Unit
             viewModelScope.launch {
                 try {
-                    when(_photo.value) {
+                    when (_photo.value) {
                         noPhoto -> repository.save(it)
                         else -> _photo.value?.file?.let { file ->
                             repository.saveWithAttachment(it, MediaUpload(file))
@@ -123,6 +122,6 @@ class PostViewModel @Inject constructor(private val repository: PostRepository, 
     }
 
     fun clearPhoto(uri: Uri?, file: File?) {
-        _photo.value = PhotoModel(uri,file)
+        _photo.value = PhotoModel(uri, file)
     }
 }

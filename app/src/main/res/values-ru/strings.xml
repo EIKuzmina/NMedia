@@ -30,4 +30,5 @@
     <string name="sign_out_dialog">Вы уверены?</string>
     <string name="but_yes">ДА</string>
     <string name="but_no">НЕТ</string>
+    <string name="ad_description">Реклама</string>
 </resources>

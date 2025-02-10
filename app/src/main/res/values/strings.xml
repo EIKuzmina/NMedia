@@ -39,4 +39,5 @@
     <string name="sign_out_dialog">Are you sure?</string>
     <string name="but_yes">YES</string>
     <string name="but_no">NO</string>
+    <string name="ad_description">Ad</string>
 </resources>

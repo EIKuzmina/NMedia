@@ -1,26 +1,22 @@
 package ru.netology.nmedia.repository
 
 import androidx.paging.ExperimentalPagingApi
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
+import androidx.paging.*
 import androidx.paging.map
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okio.IOException
 import ru.netology.nmedia.api.ApiService
 import ru.netology.nmedia.auth.AppAuth
-import ru.netology.nmedia.dao.PostDao
-import ru.netology.nmedia.dao.PostRemoteKeyDao
+import ru.netology.nmedia.dao.*
 import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.entity.*
 import ru.netology.nmedia.error.*
 import ru.netology.nmedia.handler.*
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.random.Random
 
 @Singleton
 class PostRepositoryImpl @Inject constructor(
@@ -32,7 +28,7 @@ class PostRepositoryImpl @Inject constructor(
 ) : PostRepository {
 
     @OptIn(ExperimentalPagingApi::class)
-    override val dataPaging = Pager(
+        override val dataPaging: Flow<PagingData<FeedItem>> = Pager(
         config = PagingConfig(pageSize = 5, enablePlaceholders = false),
         pagingSourceFactory = { dao.getPagingSource() },
         remoteMediator = PostRemoteMediator(
@@ -41,8 +37,13 @@ class PostRepositoryImpl @Inject constructor(
             postRemoteKeyDao = postRemoteKeyDao,
             db = appDb
         )
-    ).flow
-        .map { it.map(PostEntity::toPost) }
+    ).flow.map { it.map(PostEntity::toPost)
+        .insertSeparators { previous, _ ->
+            if (previous?.id?.rem(5) == 0){
+                Ad(Random.nextInt(), "figma.jpg")
+            } else null
+        }
+    }
 
     override suspend fun likeById(post: Post) {
         try {

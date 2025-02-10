@@ -83,7 +83,10 @@ class FeedFragment : Fragment() {
             }
         })
 
-        binding.list.adapter = adapter
+        binding.list.adapter = adapter.withLoadStateHeaderAndFooter(
+            header = PostLoadingStateAdapter { adapter.retry() },
+            footer = PostLoadingStateAdapter { adapter.retry() }
+        )
         lifecycleScope.launchWhenCreated {
             viewModel.data.collectLatest {
                 adapter.submitData(it)
@@ -94,8 +97,6 @@ class FeedFragment : Fragment() {
             adapter.loadStateFlow.collectLatest {
                 binding.swipeRefreshLayout.isRefreshing =
                     it.refresh is LoadState.Loading
-                            || it.append is LoadState.Loading
-                            || it.prepend is LoadState.Loading
             }
         }
 
